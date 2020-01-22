@@ -17,10 +17,10 @@ MERN stack is **MongoDB, Express.js, React.js and Node.js**. All these 4 support
 * **Node.js** : Node.js is an **open-source, cross-platform, JavaScript runtime environment** that executes _JavaScript_ code outside of a browser. Node.js lets developers use JavaScript to write command line tools and for server-side scripting—running scripts server-side to produce dynamic web page content before the page is sent to the user's web browser.
 
 # Logo
-![Image](images/mongodb.png "Express")
+![Image](images/mongodb.png "MongoDb")
 ![Image](images/express.png "Express")
-![Image](images/react.png "Express")
-![Image](images/node.png "Express")
+![Image](images/react.png "React")
+![Image](images/node.png "Node")
 
 
 # Node Package Manager (NPM)

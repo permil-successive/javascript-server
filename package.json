@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "permissions": "node extra/utils/permissions.js",
+    "validations": "node extra/utils/validation.js",
     "diamond": "node extra/patterns/diamond.js",
     "equilateral": "node extra/patterns/equilateral.js",
     "test": "echo \"Error: no test specified\" && exit 1"

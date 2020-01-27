@@ -1,11 +1,5 @@
-const permissions = {
-  'getUsers': {
-    all: ['head-trainer'],
-    read: ['trainee', 'trainer'],
-    write: ['trainer'],
-    delete: []
-  }
-}
+import { permissions } from "../constants"
+
 /**
  * checks objects exist or not
  * @param {} obj
@@ -43,7 +37,4 @@ function hasPermission(module, role, permissionsType) {
   return false;
 }
 
-console.log(hasPermission("allmodule", "trainer", 'read'));
-console.log(hasPermission("getUsers", "trainer", 'reead'));
-console.log(hasPermission("getUsers", "trainer", 'write'));
-console.log(hasPermission("getUsers", "trainer", 'delete'));
+export default hasPermission;

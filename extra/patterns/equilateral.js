@@ -15,8 +15,12 @@ function drawTriangle(n) {
   }
 }
 
-if(N > 1 && N <11) {
-  drawTriangle(N);
-} else {
-  console.log("Invalid number of lines");
+function drawEquilateralTriangle(n) {
+  if(n > 1 && n <11) {
+    drawTriangle(n);
+  } else {
+    console.log("Invalid number of lines");
+  }
 }
+
+export default drawEquilateralTriangle;

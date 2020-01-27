@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "permissions": "node extra/utils/permissions.js",
-    "validations": "node extra/utils/validation.js",
-    "diamond": "node extra/patterns/diamond.js",
-    "equilateral": "node extra/patterns/equilateral.js",
+    "babel-extra" : "npx babel-node extra",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/permil-st/javascript-server/issues"
   },
-  "homepage": "https://github.com/permil-st/javascript-server#readme"
+  "homepage": "https://github.com/permil-st/javascript-server#readme",
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/node": "^7.8.3",
+    "@babel/preset-env": "^7.8.3"
+  }
 }

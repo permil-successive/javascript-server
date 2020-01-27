@@ -1,27 +1,4 @@
-//list of users
-const users = [
-  {
-    traineeEmail: 'trainee1@successive.tech',
-    reviewerEmail: 'reviewer1@successive.tech',
-  }
-]
-
-
-/**
- *
- * validate the provided email
- * @param {*} email
- * @return Boolean
- */
-function validateEmail(email) {
-
-  //regular expression
-  const regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@successive.tech/mg;
-
-  //test the regular expression and return test result
-  return regex.test(email);
-}
-
+import validateEmail from "./helpers"
 
 /**
  * this function checks every users in array, validate their emails and print number
@@ -42,4 +19,4 @@ function validateUsers(myusers) {
   console.log(`Number of invalid users - ${validatedUsers.invalid.length}\nList of invalid users : ${JSON.stringify(validatedUsers.invalid)}`);
 }
 
-validateUsers(users);
+export default validateUsers;

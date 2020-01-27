@@ -28,9 +28,13 @@ function drawReflectedTriangle(n) {
   }
 }
 
-if(N > 1 && N <11) {
-  drawTriangle(N);
-  drawReflectedTriangle(N);
-} else {
-  console.log("Invalid number of lines");
+function drawDiamond(n) {
+  if(n > 1 && n <11) {
+    drawTriangle(n);
+    drawReflectedTriangle(n);
+  } else {
+    console.log("Invalid number of lines");
+  }
 }
+
+export default drawDiamond;

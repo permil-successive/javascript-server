@@ -9,19 +9,19 @@ export default class Server {
     this.app = express();
   }
 
-  bootstrap() {
+  bootstrap(): Server {
     this.setupRoutes();
     return this;
   }
 
-  setupRoutes() {
-    this.app.get('/health-check', (req: express.Request, res: express.Response) => {
+  setupRoutes(): void {
+    this.app.get('/health-check', (req: express.Request, res: express.Response): void => {
 
       res.send('I am OK');
     });
   }
 
-  run() {
+  run(): Server {
     this.app.listen(this.config.port, (err) => {
       if (err) {
         console.error(err);

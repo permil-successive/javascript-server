@@ -1,4 +1,4 @@
-export default interface NotFoundError {
+export default interface INotFoundError {
   message: string;
   code: string;
 }

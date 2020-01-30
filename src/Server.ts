@@ -1,5 +1,5 @@
 import *  as express from 'express';
-import IConfig from './config/IConfig';
+import { IConfig } from './config';
 import * as bodyParser from 'body-parser';
 import { errorHandler, notFoundRoute } from './libs';
 

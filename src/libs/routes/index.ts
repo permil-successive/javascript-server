@@ -1,3 +1,4 @@
 import notFoundRoute from './notFoundRoute';
+import INotFoundError from './INotFoundError';
 
-export default notFoundRoute;
+export { notFoundRoute, INotFoundError };

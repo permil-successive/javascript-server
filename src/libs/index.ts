@@ -1,4 +1,4 @@
 import errorHandler from './errorHandler';
-import notFoundRoute from './routes/index';
+import { notFoundRoute, INotFoundError } from './routes';
 
-export { errorHandler, notFoundRoute };
+export { errorHandler, notFoundRoute, INotFoundError };

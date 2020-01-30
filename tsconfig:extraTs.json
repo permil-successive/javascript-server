@@ -10,20 +10,20 @@
     "allowJs": true /* Allow javascript files to be compiled. */,
     "checkJs": false /* Report errors in .js files. */,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./build",
     "baseUrl": ".",
     "paths": {
       "*": [
         "node_modules/*",
         "src/types/*"
       ]
-    },
+    }
   },
   "exclude": [
-    "dist", "build"
+    "build", "dist"
   ],
   "include": [
-    "src"
+    "extraTs"
   ],
   "types": [
     "src/types"

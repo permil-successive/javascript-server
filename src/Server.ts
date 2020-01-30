@@ -1,8 +1,7 @@
 import *  as express from 'express';
 import IConfig from './config/IConfig';
 import * as bodyParser from 'body-parser';
-import errorHandler from './libs/errorHandler';
-import notFoundRoute from './libs/routes/notFoundRoute';
+import { errorHandler, notFoundRoute } from './libs';
 
 export default class Server {
 

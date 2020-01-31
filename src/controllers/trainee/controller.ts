@@ -5,6 +5,8 @@ class Controller {
 
   static instance: Controller;
 
+  private constructor() { }
+
   static getInstance(): Controller {
     if (this.instance)
       return this.instance;

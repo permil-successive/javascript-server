@@ -1,0 +1,62 @@
+import IError from '../../libs/IError';
+
+export default {
+  create: {
+    id: {
+      required: true,
+      string: true,
+      in: ['body'],
+      custom: (value: any, errorMessage: IError): boolean => {
+        console.log('inside custom validation function');
+        console.log('Value', value);
+        errorMessage.message = 'Message';
+        errorMessage.code = '401';
+        return true;
+      }
+    },
+    name: {
+      required: true,
+      regex: /^[a-z ,.'-]+$/i,
+      in: ['body'],
+      errorMessage: 'Name is required',
+    }
+  },
+  delete: {
+    id: {
+      required: true,
+      errorMessage: 'Id is required',
+      in: ['params']
+    }
+  },
+  get: {
+    skip: {
+      required: false,
+      default: 0,
+      number: true,
+      in: ['query'],
+      errorMessage: 'Skip is invalid',
+    },
+    limit: {
+      required: false,
+      default: 10,
+      number: true,
+      in: ['query'],
+      errorMessage: 'Limit is invalid',
+    }
+  },
+  update: {
+    id: {
+      required: true,
+      string: true,
+      in: ['body']
+    },
+    dataToUpdate: {
+      in: ['body'],
+      required: true,
+      isObject: true,
+      custom: (dataToUpdate) => {
+        //
+      },
+    }
+  }
+};

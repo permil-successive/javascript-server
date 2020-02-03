@@ -1,6 +1,5 @@
-export default interface IErrorHandlerResponse {
+import IResponse from '../IResponse';
+
+export default interface IErrorHandlerResponse extends IResponse {
   error: string;
-  message: string;
-  status: string;
-  timestamp: string;
 }

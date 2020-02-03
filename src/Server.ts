@@ -2,6 +2,7 @@ import *  as express from 'express';
 import { IConfig } from './config';
 import * as bodyParser from 'body-parser';
 import { errorHandler, notFoundRoute } from './libs';
+import mainRouter from './router';
 
 export default class Server {
 
@@ -28,6 +29,7 @@ export default class Server {
   }
 
   setupRoutes(): void {
+
     this.app.get('/health-check', (req: express.Request, res: express.Response): void => {
 
       res.send('I am OK');
@@ -39,6 +41,8 @@ export default class Server {
       console.log(req.body);
       res.send('Ok');
     });
+
+    this.app.use('/api', mainRouter);
   }
 
   run(): Server {

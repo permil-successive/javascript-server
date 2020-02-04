@@ -15,8 +15,8 @@ export default class Server {
   bootstrap(): Server {
     this.initBodyParser();
     this.setupRoutes();
-    this.app.use(notFoundRoute);
-    this.app.use(errorHandler);
+    this.app.use(notFoundRoute); // firing route not found error
+    this.app.use(errorHandler); // attaching error handler
     return this;
   }
 

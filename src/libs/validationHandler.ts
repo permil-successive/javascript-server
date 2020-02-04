@@ -8,8 +8,14 @@ function checkRegex(stringToValidate: string, regex: RegExp): boolean {
 export default (config) => (req: Request, res: Response, next: NextFunction) => {
   console.info('====== inside validation handler =======');
   console.debug(`req.body = ${req.body}`);
-  console.log(config);
+  console.debug('config = ', config);
   const errorMessages = [];
+  const variableCounts = {
+    body: 0,
+    params: 0,
+    query: 0
+  };
+
   Object.keys(config).forEach((key) => {
     console.debug(`key = ${key}`);
 
@@ -22,11 +28,11 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
     validationConfig.in.forEach((element) => {
 
       console.debug(`element = ${element}`);
+      console.debug(req[element]);
 
       let toValidate = req[element][key];
       errorMessage.code = '401';
 
-      console.debug(req[element]);
       console.debug(`tovalidate = ${toValidate}`);
 
       // assigning default value
@@ -34,6 +40,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
         toValidate = req[element][key] = validationConfig.default;
       }
 
+      // checking for not required and not supplied variable
       if (!validationConfig.required && toValidate === undefined) {
         console.debug('inside return require');
         return;
@@ -45,42 +52,42 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
           (typeof toValidate === 'string' && toValidate.trim() === '')
         )
       ) {
-        console.info(`checking for required`);
+        console.debug(`checking for required`);
         errorMessage.message += `${key} is required. `;
         isError = true;
       }
 
       // checking for string datatype
       if (validationConfig.string && typeof toValidate !== 'string') {
-        console.info(`checking for string datatype`);
+        console.debug(`checking for string datatype`);
         errorMessage.message += `${key} is not as per defined datatype. `;
         isError = true;
       }
 
       // checking for number datatype
       if (validationConfig.number && isNaN(parseInt(toValidate, 10))) {
-        console.info(`checking for number datatype`);
+        console.debug(`checking for number datatype`);
         errorMessage.message += `${key} is not as per defined datatype. `;
         isError = true;
       }
 
       // checking for object datatype
       if (validationConfig.isObject && typeof toValidate !== 'object') {
-        console.info(`checking for object datatype`);
+        console.debug(`checking for object datatype`);
         errorMessage.message += `${key} is not as per defined datatype. `;
         isError = true;
       }
 
       // checking for regex
       if (validationConfig.regex && !checkRegex(toValidate, validationConfig.regex)) {
-        console.info(`checking for regex`);
+        console.debug(`checking for regex`);
         errorMessage.message +=  `${key} is not as per required data. `;
         isError = true;
       }
 
       // calling custom validation (callback)
       if (validationConfig.custom && !validationConfig.custom(toValidate, errorMessage)) {
-        console.info(`calling custom validation callback`);
+        console.debug(`calling custom validation callback`);
         isError = true;
       }
 
@@ -88,11 +95,24 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
         errorMessage.message = validationConfig.errorMessage;
       }
 
-      console.log(errorMessage);
+      // counting the safe variable
+      variableCounts[element]++;
+
+      console.debug('current error message = ', errorMessage);
     });
     if (isError)
       errorMessages.push(errorMessage);
   });
+
+  // checking for extra variables
+  if (
+    (Object.keys(req.body).length > variableCounts.body) ||
+    (Object.keys(req.params).length > variableCounts.params) ||
+    (Object.keys(req.query).length > variableCounts.query)
+  ) {
+    const errorMessage: IError = { code: '401', message: 'Unexpected variables supplied'};
+    errorMessages.push(errorMessage);
+  }
   if (errorMessages.length > 0)
     next(errorMessages);
   else

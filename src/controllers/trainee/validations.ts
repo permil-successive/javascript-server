@@ -9,9 +9,13 @@ export default {
       custom: (value: any, errorMessage: IError): boolean => {
         console.log('inside custom validation function');
         console.log('Value', value);
-        errorMessage.message = 'Message';
-        errorMessage.code = '401';
-        return true;
+        if (!value.startsWith('A')) {
+          errorMessage.message = 'Message';
+          errorMessage.code = '401';
+          return false;
+        } else {
+          return true;
+        }
       }
     },
     name: {
@@ -54,8 +58,19 @@ export default {
       in: ['body'],
       required: true,
       isObject: true,
-      custom: (dataToUpdate) => {
-        //
+      custom: (dataToUpdate: any, errorMessage: IError): boolean => {
+        if (dataToUpdate.id === undefined) {
+          errorMessage.message = 'id is required in dataToUpdate';
+          return false;
+        } else if (dataToUpdate.name === undefined) {
+          errorMessage.message = 'name is required in dataToUpdate';
+          return false;
+        } else if (dataToUpdate.location === undefined) {
+          errorMessage.message = 'location is required in dataToUpdate';
+          return false;
+        } else {
+          return true;
+        }
       },
     }
   }

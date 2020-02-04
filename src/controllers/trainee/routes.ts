@@ -6,12 +6,13 @@ import authorizationHandler from '../../libs/routes/authMiddleware';
 
 const traineeRoutes: Router  = Router();
 const { list, create, update, delete: deleteFunction } = Controller;
+const { get: getConfig, create: createConfig, update: updateConfig, delete: deleteConfig } = validationConfig;
 
 traineeRoutes.route('/')
-.get(authorizationHandler('trainee', 'read'), validationHandler(validationConfig.get), list)
-.post(authorizationHandler('trainee', 'write'), validationHandler(validationConfig.create), create)
-.put(authorizationHandler('trainee', 'write'), validationHandler(validationConfig.update), update)
-.delete(authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
+.get(authorizationHandler('trainee', 'read'), validationHandler(getConfig), list)
+.post(authorizationHandler('trainee', 'write'), validationHandler(createConfig), create)
+.put(authorizationHandler('trainee', 'write'), validationHandler(updateConfig), update)
+.delete(authorizationHandler('trainee', 'delete'), validationHandler(deleteConfig), deleteFunction);
 
 traineeRoutes.delete('/:id', authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
 

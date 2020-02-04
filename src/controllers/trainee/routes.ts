@@ -5,12 +5,13 @@ import validationConfig from './validations';
 
 const traineeRoutes: Router  = Router();
 const { list, create, update, delete: deleteFunction } = Controller;
+const { get: getConfig, create: createConfig, update: updateConfig, delete: deleteConfig } = validationConfig;
 
 traineeRoutes.route('/')
-.get(validationHandler(validationConfig.get), list)
-.post(validationHandler(validationConfig.create), create)
-.put(validationHandler(validationConfig.update), update)
-.delete(validationHandler(validationConfig.delete), deleteFunction);
+.get(validationHandler(getConfig), list)
+.post(validationHandler(createConfig), create)
+.put(validationHandler(updateConfig), update)
+.delete(validationHandler(deleteConfig), deleteFunction);
 
 traineeRoutes.delete('/:id', validationHandler(validationConfig.delete), deleteFunction);
 

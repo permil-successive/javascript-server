@@ -5,17 +5,18 @@ export default {
     id: {
       required: true,
       string: true,
-      in: ['body'],
+      in: ['body', 'perms'],
       custom: (value: any, errorMessage: IError): boolean => {
         console.log('inside custom validation function');
         console.log('Value', value);
-        if (!value.startsWith('A')) {
+        return false;
+        /*if (!value.startsWith('A')) {
           errorMessage.message = 'Message';
           errorMessage.code = '401';
           return false;
         } else {
           return true;
-        }
+        }*/
       }
     },
     name: {

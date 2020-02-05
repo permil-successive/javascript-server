@@ -208,7 +208,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       isError = checkRegex(validationConfig, toValidate, errorMessage, key) || isError;
       if (isError) return;
 
-      isError = checkCustom(validationConfig, toValidate, errorMessage, key) || isError;
+      isError = checkCustom(validationConfig, toValidate, errorMessage) || isError;
       if (isError) return;
     });
 

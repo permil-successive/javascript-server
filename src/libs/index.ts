@@ -1,8 +1,6 @@
-import errorHandler from './errorHandler';
-import { notFoundRoute, INotFoundError } from './routes';
+export { default as errorHandler } from './errorHandler';
+export { default as notFoundRoute } from './routes';
+export { default as validationHandler } from './validationHandler';
 
-// export { validationHandler } from './validationHandler';
+
 // TODO:  use single syntax for import/export
-import validationHandler from './validationHandler';
-
-export { errorHandler, notFoundRoute, INotFoundError, validationHandler };

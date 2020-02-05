@@ -1,8 +1,12 @@
-import { INotFoundError } from './routes';
+import IError from './IError';
 import IErrorHandlerResponse from './IErrorHandlerResponse';
 import { Request, Response, NextFunction } from 'express';
 
-const formatError = (err: INotFoundError): IErrorHandlerResponse => {
+const formatError = (err: IError): IErrorHandlerResponse => {
+
+  console.debug('===========inside format error==================');
+  console.debug('err = ', err);
+
   return {
     error: `${err.code} - ${err.message}`,
     message: err.message,
@@ -11,7 +15,11 @@ const formatError = (err: INotFoundError): IErrorHandlerResponse => {
   };
 };
 
-const constructErrors = (err: INotFoundError): IErrorHandlerResponse[] => {
+const constructErrors = (err: IError): IErrorHandlerResponse[] => {
+
+  console.debug('===========inside format error==================');
+  console.debug('err = ', err);
+
   const errors: IErrorHandlerResponse[] = [];
   if (Array.isArray(err)) {
     err.forEach((element) => {
@@ -24,16 +32,17 @@ const constructErrors = (err: INotFoundError): IErrorHandlerResponse[] => {
   return errors;
 };
 
-const ErrorHandler = (err: INotFoundError, req: Request, res: Response, next: NextFunction) => {
+const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFunction) => {
 
   console.debug('===================inside error handler===============================');
   console.debug('err = ', err);
+
   let errors: IErrorHandlerResponse[];
 
-  // constructing error object
   errors = constructErrors(err);
 
   console.info(errors);
+
   // TODO: fix error code in response
   res.status(401).send(errors); // sending error to client
 };

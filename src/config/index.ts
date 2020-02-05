@@ -1,4 +1,2 @@
-import configuration from './configuration';
-import IConfig from './IConfig';
-
-export { configuration, IConfig };
+export { default as configuration } from './configuration';
+export { default as IConfig } from './IConfig';

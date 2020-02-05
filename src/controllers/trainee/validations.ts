@@ -9,14 +9,13 @@ export default {
       custom: (value: any, errorMessage: IError): boolean => {
         console.log('inside custom validation function');
         console.log('Value', value);
-        return false;
-        /*if (!value.startsWith('A')) {
+        if (!(value && value.startsWith('A'))) {
           errorMessage.message = 'Message';
           errorMessage.code = '401';
           return false;
         } else {
           return true;
-        }*/
+        }
       }
     },
     name: {

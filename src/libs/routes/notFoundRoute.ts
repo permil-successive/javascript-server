@@ -1,4 +1,4 @@
-import INotFoundError from './INotFoundError';
+import INotFoundError from '../IError';
 import { Request, Response, NextFunction } from 'express';
 
 const notFoundRoute = (req: Request, res: Response, next: NextFunction) => {

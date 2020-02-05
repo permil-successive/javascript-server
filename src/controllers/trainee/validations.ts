@@ -5,12 +5,12 @@ export default {
     id: {
       required: true,
       string: true,
-      in: ['body', 'perms'],
+      in: ['body'],
       custom: (value: any, errorMessage: IError): boolean => {
         console.log('inside custom validation function');
         console.log('Value', value);
         if (!(value && value.startsWith('A'))) {
-          errorMessage.message = 'Message';
+          errorMessage.message = 'id is not start with A';
           errorMessage.code = '401';
           return false;
         } else {

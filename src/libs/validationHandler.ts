@@ -28,7 +28,7 @@ function validateValidationConfig (validationConfig): void {
  */
 function assignDefualtValue(validationConfig, toValidate): any {
 
-  if (validationConfig.default && !toValidate) {
+  if ((validationConfig.default !== undefined) && !toValidate) {
     return validationConfig.default;
   } else {
     return toValidate;
@@ -43,8 +43,9 @@ function assignDefualtValue(validationConfig, toValidate): any {
  * @param errorMessage an error message in case of error
  * @param key key of variable
  */
-function checkRegex(toValidate: string, regex: RegExp, errorMessage: IError, key: string): boolean {
+function checkRegex(validationConfig, toValidate: string, errorMessage: IError, key: string): boolean {
 
+  const regex: RegExp = validationConfig.regex;
   if (regex && regex.test(toValidate)) {
     console.debug(`checking for regex`);
     errorMessage.message +=  `${key} is not as per required data. `;
@@ -217,9 +218,10 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       errorMessage.message = validationConfig.errorMessage;
     }
 
-    if (isError)
+    if (isError) {
       console.debug(`Key = ${key}, error message = `, errorMessage);
       errorMessages.push(errorMessage);
+    }
   });
 
   // checking for extra variables

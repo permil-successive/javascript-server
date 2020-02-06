@@ -85,6 +85,7 @@ function isRequired(validationConfig, toValidate, key: string): boolean {
       message: `${key} is required. `,
       code: ERROR_CODE
     };
+
     throw error;
   }
 
@@ -106,6 +107,8 @@ function isString(validationConfig, toValidate, key: string): boolean {
       message: `${key} is not as per defined datatype. `,
       code: ERROR_CODE
     };
+
+    throw error;
   }
 
   return true;

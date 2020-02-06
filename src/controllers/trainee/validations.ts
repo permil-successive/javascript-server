@@ -12,7 +12,7 @@ export default {
         if (!(value && value.startsWith('A'))) {
           const errorMessage: IError = {
             message: 'id is not start with A',
-            code: '401'
+            code: '400'
           };
 
           throw errorMessage;
@@ -61,16 +61,24 @@ export default {
       in: ['body'],
       required: true,
       isObject: true,
-      custom: (dataToUpdate: any, errorMessage: IError): boolean => {
+      custom: (dataToUpdate: any): boolean => {
         if (typeof dataToUpdate.name !== 'string' || dataToUpdate.name.trim() === '') {
-          errorMessage.message = 'name is required in dataToUpdate';
-          return false;
+          const errorMessage: IError = {
+            message: 'name is required of string in dataToUpdate',
+            code: '400'
+          };
+
+          throw errorMessage;
         } else if (typeof dataToUpdate.location !== 'string' || dataToUpdate.location.trim() === '') {
-          errorMessage.message = 'location is required in dataToUpdate';
-          return false;
-        } else {
-          return true;
+          const errorMessage: IError = {
+            message: 'location is required of string in dataToUpdate',
+            code: '400'
+          };
+
+          throw errorMessage;
         }
+
+        return true;
       },
     }
   }

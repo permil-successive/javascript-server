@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import IResponse from '../../IResponse';
 import { sendResponse } from '../../libs';
 
 class Controller {

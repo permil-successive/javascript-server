@@ -6,12 +6,15 @@ export default class Database {
 
   open(): Promise<any> {
 
-    return new Promise<any>((resolve, reject) => {
-      mongoose.connect(this.mongoUri, { useNewUrlParser: true }).then(() => {
+    return new Promise<any>(async (resolve, reject) => {
+
+      await mongoose.connect(this.mongoUri, { useNewUrlParser: true }, (err) => {
+
+        if (err)
+          return reject(err);
+
         console.info(`Database is connect@${this.mongoUri}`);
         resolve();
-      }).catch((err) => {
-        reject(err);
       });
     });
   }

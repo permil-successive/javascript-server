@@ -36,13 +36,6 @@ export default class Server {
       res.send('I am OK');
     });
 
-    this.app.get('/body-parser', (req: express.Request, res: express.Response): void => {
-
-      console.log('user send data : ');
-      console.log(req.body);
-      res.send('Ok');
-    });
-
     this.app.use('/api', mainRouter);
   }
 

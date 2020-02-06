@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Controller from './controller';
 import { validationHandler } from '../../libs';
 import validationConfig from './validations';
-import authorizationHandler from '../../libs/routes/authMiddleware';
+import { authorizationHandler } from '../../libs/routes';
 
 const traineeRoutes: Router  = Router();
 const { list, create, update, delete: deleteFunction } = Controller;
@@ -14,6 +14,10 @@ traineeRoutes.route('/')
 .put(authorizationHandler('trainee', 'write'), validationHandler(updateConfig), update)
 .delete(authorizationHandler('trainee', 'delete'), validationHandler(deleteConfig), deleteFunction);
 
+<<<<<<< HEAD
 traineeRoutes.delete('/:id', authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
+=======
+traineeRoutes.delete('/:id', validationHandler(deleteConfig), deleteFunction);
+>>>>>>> 535d9e621d732678ec3a17ec90d6235829d88800
 
 export default traineeRoutes;

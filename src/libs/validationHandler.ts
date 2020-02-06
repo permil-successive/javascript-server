@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import IError from './IError';
 
+const ERROR_CODE = '400';
+
 /**
  * validate the config of the variable as assign default values, if required
  *
@@ -15,8 +17,13 @@ function validateValidationConfig (validationConfig): void {
   // checking validation.in data
   const ValidationInSet = [ 'body', 'params', 'query' ];
   validationConfig.in.forEach((element) => {
-    if (ValidationInSet.indexOf(element) === -1)
-      throw { message: 'only use thse elements ("body", "params", "query") "in" key', code: 500};
+    if (ValidationInSet.indexOf(element) === -1) {
+      const errorMessage: IError = {
+        message: `${element} is not permitted to use in the 'in' key`,
+        code: ERROR_CODE
+      };
+      throw errorMessage;
+    }
   });
 }
 
@@ -30,9 +37,9 @@ function assignDefualtValue(validationConfig, toValidate): any {
 
   if ((validationConfig.default !== undefined) && !toValidate) {
     return validationConfig.default;
-  } else {
-    return toValidate;
   }
+
+  return toValidate;
 }
 
 /**
@@ -40,18 +47,21 @@ function assignDefualtValue(validationConfig, toValidate): any {
  *
  * @param toValidate variable to validate
  * @param regex a regular expression
- * @param errorMessage an error message in case of error
  * @param key key of variable
+ *
  */
-function checkRegex(validationConfig, toValidate: string, errorMessage: IError, key: string): boolean {
+function isRegex(validationConfig, toValidate: string, key: string): boolean {
 
   const regex: RegExp = validationConfig.regex;
   if (regex && regex.test(toValidate)) {
-    console.debug(`checking for regex`);
-    errorMessage.message +=  `${key} is not as per required data. `;
-    return true;
+    console.debug(`error in regex`);
+    const error: IError = {
+      message: `${key} is not as per required data. `,
+      code: ERROR_CODE
+    };
+    throw error;
   } else {
-    return false;
+    return true;
   }
 }
 
@@ -60,22 +70,26 @@ function checkRegex(validationConfig, toValidate: string, errorMessage: IError, 
  *
  * @param validationConfig config of the variable for validation
  * @param toValidate a variable to validate
- * @param errorMessage an error message in case of error
  * @param key key of variable
  */
-function checkRequired(validationConfig, toValidate, errorMessage: IError, key: string): boolean {
+function isRequired(validationConfig, toValidate, key: string): boolean {
 
-  if (validationConfig.required &&
+  if (
+    validationConfig.required &&
     (toValidate === undefined || toValidate === null ||
       (typeof toValidate === 'string' && toValidate.trim() === '')
     )
   ) {
-    console.debug(`checking for required`);
-    errorMessage.message += `${key} is required. `;
-    return true;
-  } else {
-    return false;
+    console.debug(`error in required`);
+    const error: IError = {
+      message: `${key} is required. `,
+      code: ERROR_CODE
+    };
+
+    throw error;
   }
+
+  return true;
 }
 
 /**
@@ -83,18 +97,21 @@ function checkRequired(validationConfig, toValidate, errorMessage: IError, key: 
  *
  * @param validationConfig config of the variable for validation
  * @param toValidate a variable to validate
- * @param errorMessage an error message in case of error
  * @param key key of variable
  */
-function checkString(validationConfig, toValidate, errorMessage: IError, key: string): boolean {
+function isString(validationConfig, toValidate, key: string): boolean {
 
   if (validationConfig.string && typeof toValidate !== 'string') {
-    console.debug(`checking for string datatype`);
-    errorMessage.message += `${key} is not as per defined datatype. `;
-    return true;
-  } else {
-    return false;
+    console.debug(`error in string datatype`);
+    const error: IError = {
+      message: `${key} is not as per defined datatype. `,
+      code: ERROR_CODE
+    };
+
+    throw error;
   }
+
+  return true;
 }
 
 /**
@@ -102,18 +119,20 @@ function checkString(validationConfig, toValidate, errorMessage: IError, key: st
  *
  * @param validationConfig config of the variable for validation
  * @param toValidate a variable to validate
- * @param errorMessage an error message in case of error
  * @param key key of variable
  */
-function checkNumber(validationConfig, toValidate, errorMessage: IError, key: string): boolean {
+function isNumber(validationConfig, toValidate, key: string): boolean {
 
   if (validationConfig.number && isNaN(parseInt(toValidate, 10))) {
-    console.debug(`checking for number datatype`);
-    errorMessage.message += `${key} is not as per defined datatype. `;
-    return true;
-  } else {
-    return false;
+    console.debug(`error in number  datatype`);
+    const error: IError = {
+      message: `${key} is not as per required data. `,
+      code: ERROR_CODE
+    };
+    throw error;
   }
+
+  return true;
 }
 
 /**
@@ -121,18 +140,20 @@ function checkNumber(validationConfig, toValidate, errorMessage: IError, key: st
  *
  * @param validationConfig config of the variable for validation
  * @param toValidate a variable to validate
- * @param errorMessage an error message in case of error
  * @param key key of variable
  */
-function checkObject(validationConfig, toValidate, errorMessage: IError, key: string): boolean {
+function isObject(validationConfig, toValidate, key: string): boolean {
 
-  if (validationConfig.isObject && typeof toValidate !== 'object') {
-    console.debug(`checking for object datatype`);
-    errorMessage.message += `${key} is not as per defined datatype. `;
-    return true;
-  } else {
-    return false;
+  if (validationConfig.isObject && (typeof toValidate !== 'object' || Array.isArray(toValidate))) {
+    console.debug(`error in object datatype`);
+    const error: IError = {
+      message: `${key} is not as per defined datatype. `,
+      code: ERROR_CODE
+    };
+    throw error;
   }
+
+  return true;
 }
 
 /**
@@ -140,16 +161,15 @@ function checkObject(validationConfig, toValidate, errorMessage: IError, key: st
  *
  * @param validationConfig config of the variable for validation
  * @param toValidate a variable to validate
- * @param errorMessage an error message in case of error
  */
-function checkCustom(validationConfig, toValidate, errorMessage: IError): boolean {
+function isCustom(validationConfig, toValidate): boolean {
 
-  if (validationConfig.custom && !validationConfig.custom(toValidate, errorMessage)) {
+  if (validationConfig.custom && !validationConfig.custom(toValidate)) {
     console.debug(`calling custom validation callback`);
-    return true;
-  } else {
     return false;
   }
+
+  return true;
 }
 
 export default (config) => (req: Request, res: Response, next: NextFunction) => {
@@ -167,11 +187,24 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
   Object.keys(config).forEach((key) => {
     console.debug(`key = ${key}`);
 
-    const errorMessage: IError = { code: '400', message: ''};
     const validationConfig = config[key];
-    let isError = false;
 
-    validateValidationConfig(validationConfig);
+    try {
+
+      validateValidationConfig(validationConfig);
+
+    } catch (err) {
+
+      const errorMessage: IError = err || { code: '500', message: 'Unexpected expected error'};
+
+      // override config default error message
+      if (validationConfig.errorMessage !== undefined) {
+        errorMessage.message = validationConfig.errorMessage;
+      }
+
+      console.debug(`Key = ${key}, error message = `, errorMessage);
+      errorMessages.push(errorMessage);
+    }
 
     validationConfig.in.forEach((element) => {
 
@@ -194,34 +227,26 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       // counting the safe variable
       variableCounts[element]++;
 
-      isError = checkRequired(validationConfig, toValidate, errorMessage, key) || isError;
-      if (isError) return;
+      try {
+        isRequired(validationConfig, toValidate, key);
+        isString(validationConfig, toValidate, key);
+        isNumber(validationConfig, toValidate, key);
+        isObject(validationConfig, toValidate, key);
+        isRegex(validationConfig, toValidate, key);
+        isCustom(validationConfig, toValidate);
+      } catch (err) {
 
-      isError = checkString(validationConfig, toValidate, errorMessage, key) || isError;
-      if (isError) return;
+        const errorMessage: IError = err || { code: '500', message: 'Unexpected expected error'};
 
-      isError = checkNumber(validationConfig, toValidate, errorMessage, key) || isError;
-      if (isError) return;
+        // override config default error message
+        if (validationConfig.errorMessage !== undefined) {
+          errorMessage.message = validationConfig.errorMessage;
+        }
 
-      isError = checkObject(validationConfig, toValidate, errorMessage, key) || isError;
-      if (isError) return;
-
-      isError = checkRegex(validationConfig, toValidate, errorMessage, key) || isError;
-      if (isError) return;
-
-      isError = checkCustom(validationConfig, toValidate, errorMessage) || isError;
-      if (isError) return;
+        console.debug(`Key = ${key}, error message = `, errorMessage);
+        errorMessages.push(errorMessage);
+      }
     });
-
-    // override config default error message
-    if (validationConfig.errorMessage !== undefined) {
-      errorMessage.message = validationConfig.errorMessage;
-    }
-
-    if (isError) {
-      console.debug(`Key = ${key}, error message = `, errorMessage);
-      errorMessages.push(errorMessage);
-    }
   });
 
   // checking for extra variables
@@ -235,7 +260,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
   }
 
   if (errorMessages.length > 0)
-    next(errorMessages);
-  else
-    next();
+    return next(errorMessages);
+
+  next();
 };

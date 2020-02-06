@@ -13,6 +13,6 @@ traineeRoutes.route('/')
 .put(validationHandler(updateConfig), update)
 .delete(validationHandler(deleteConfig), deleteFunction);
 
-traineeRoutes.delete('/:id', validationHandler(validationConfig.delete), deleteFunction);
+traineeRoutes.delete('/:id', validationHandler(deleteConfig), deleteFunction);
 
 export default traineeRoutes;

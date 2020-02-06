@@ -10,8 +10,8 @@ const formatError = (err: IError): IErrorHandlerResponse => {
   return {
     error: `${err.code} - ${err.message}`,
     message: err.message,
-    status: err.code,
-    timestamp: new Date().toUTCString()
+    status: 'Error',
+    timestamp: new Date().toISOString()
   };
 };
 
@@ -43,8 +43,7 @@ const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFuncti
 
   console.info(errors);
 
-  // TODO: fix error code in response
-  res.status(401).send(errors); // sending error to client
+  res.status(err.code || err[0].code || 500).send(errors); // sending error to client
 };
 
 export default ErrorHandler;

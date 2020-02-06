@@ -4,19 +4,21 @@ import IError from '../IError';
 import config from '../../config/configuration';
 import { hasPermission } from './utils/index';
 
+const ERROR_CODE = '401';
+
 export default (currentModule: string, permissionType: string) => (req: Request, res: Response, next: NextFunction) => {
   console.info('==============inside auth middleware===================');
-
-  const error: IError = {
-    code: '401',
-    message: 'Unathorised Access'
-  };
 
   try {
 
     const token = req.headers.authorization;
     console.debug(token);
     const decodedUser = jwt.verify(token, config.secretKey);
+
+    const error: IError = {
+      code: ERROR_CODE,
+      message: 'Unathorised Access'
+    };
 
     console.debug('decoded user = ', decodedUser);
 
@@ -32,8 +34,14 @@ export default (currentModule: string, permissionType: string) => (req: Request,
 
     return next();
   } catch (exception) {
+
     console.error(exception);
-    error.message = exception.name;
+
+    const error: IError = {
+      code: ERROR_CODE,
+      message: exception.name
+    };
+
     next(error);
   }
 };

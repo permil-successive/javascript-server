@@ -3,10 +3,12 @@ import * as jwt from 'jsonwebtoken';
 import IError from '../IError';
 import config from '../../config/configuration';
 import { hasPermission } from './utils/index';
+import { UserRepository } from '../../repositories';
+import IRequest from './IRequest';
 
 const ERROR_CODE = '401';
 
-export default (currentModule: string, permissionType: string) => (req: Request, res: Response, next: NextFunction) => {
+export default (currentModule: string, permissionType: string) => async (req: IRequest, res: Response, next: NextFunction) => {
   console.info('==============inside auth middleware===================');
 
   try {
@@ -27,8 +29,22 @@ export default (currentModule: string, permissionType: string) => (req: Request,
       return next(error);
     }
 
-    if (!hasPermission(currentModule, decodedUser.role, permissionType)) {
-      console.info(`unauthorised access to ${decodedUser.role} while ${permissionType} in ${currentModule}`);
+    // repo
+    const userRepository = new UserRepository();
+    const user = await userRepository.findOne({
+      _id : decodedUser.id,
+      email: decodedUser.email
+    });
+
+    if (!user) {
+      console.info('given user doesn\'t exist');
+      return next(error);
+    }
+
+    req.user = user; // assigning user to request for further use
+
+    if (!hasPermission(currentModule, user.role, permissionType)) {
+      console.info(`unauthorised access to ${user.role} while ${permissionType} in ${currentModule}`);
       return next(error);
     }
 

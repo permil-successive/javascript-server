@@ -11,7 +11,7 @@ export const permissions: Ipermissions = {
     delete: []
   },
   'trainee' : {
-    all: ['trainee'],
+    all: ['head-trainer'],
     read: ['trainee', 'trainer'],
     write: ['trainer'],
     delete: []

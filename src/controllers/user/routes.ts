@@ -2,10 +2,9 @@ import { Router } from 'express';
 import Controller from './controller';
 import validationConfig from './validations';
 import { validationHandler, authorizationHandler, PermissionType } from '../../libs';
-// import { authorizationHandler } from '../../libs/routes';
 
 const userRoutes: Router  = Router();
-const { list, create, update, delete: deleteFunction } = Controller;
+const { list, create, update, delete: deleteFunction, fetchMe } = Controller;
 const { get: getConfig, create: createConfig, update: updateConfig, delete: deleteConfig } = validationConfig;
 const moduleName = 'trainee';
 
@@ -16,5 +15,6 @@ userRoutes.route('/')
 .delete(authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
 
 userRoutes.delete('/:id', authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
+userRoutes.get('/me', authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), fetchMe);
 
 export default userRoutes;

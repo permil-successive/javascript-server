@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { sendResponse } from '../../libs';
 import { UserRepository } from '../../repositories';
+import { IRequest } from '../../libs';
 
 class Controller {
 
@@ -23,6 +24,15 @@ class Controller {
 
     try {
       sendResponse(await this.userRepository.create(req.body), res, 'data inserted');
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  fetchMe = async (req: IRequest, res: Response, next: NextFunction) => {
+
+    try {
+      sendResponse(req.user, res, 'data fetched');
     } catch (err) {
       next(err);
     }

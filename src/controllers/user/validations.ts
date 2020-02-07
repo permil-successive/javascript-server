@@ -2,36 +2,75 @@ import IError from '../../libs/IError';
 
 export default {
   create: {
-    id: {
+    name: {
+      required: true,
+      regex: /^[a-z ,.'-]+$/i,
+      in: ['body'],
+      errorMessage: 'name is required',
+    },
+    role: {
+      required: true,
+      in: [ 'body' ],
+      errorMessage: 'role is required'
+    },
+    address: {
       required: true,
       string: true,
-      in: ['body'],
-      custom: (value: any): boolean => {
-        console.log('inside custom validation function');
-        console.log('Value', value);
-        if (!(value && value.startsWith('A'))) {
+      in: [ 'body' ],
+      errorMessage: 'address is required'
+    },
+    email: {
+      required: true,
+      string: true,
+      in: [ 'body' ],
+      errorMessage: 'email is required'
+    },
+    mobileNumber: {
+      required: true,
+      number: true,
+      in: [ 'body' ],
+      errorMessage: 'mobileNumber is required'
+    },
+    dob: {
+      required: true,
+      in: [ 'body' ],
+      errorMessage: 'dob is required and must be a valid date',
+      custom: (value) => {
+        try {
+          new Date(value);
+        } catch (err) {
           const errorMessage: IError = {
-            message: 'id is not start with A',
+            message: err.name,
             code: '400'
           };
 
           throw errorMessage;
         }
-
-        return true;
       }
     },
-    name: {
+    hobbies: {
       required: true,
-      regex: /^[a-z ,.'-]+$/i,
-      in: ['body'],
-      errorMessage: 'Name is required',
+      in: [ 'body' ],
+      errorMessage: 'hobbies is required',
+      custom: (value) => {
+        try {
+          if (!Array.isArray(value))
+            throw { message: 'hobbies must be string array' };
+        } catch (err) {
+          const errorMessage: IError = {
+            message: err.name,
+            code: '400'
+          };
+
+          throw errorMessage;
+        }
+      }
     }
   },
   delete: {
     id: {
       required: true,
-      errorMessage: 'Id is required',
+      errorMessage: 'id is required',
       in: ['params']
     }
   },
@@ -62,19 +101,41 @@ export default {
       required: true,
       isObject: true,
       custom: (dataToUpdate: any): boolean => {
+        const errorMessage: IError = {
+          message: '',
+          code: '400'
+        };
+
         if (typeof dataToUpdate.name !== 'string' || dataToUpdate.name.trim() === '') {
-          const errorMessage: IError = {
-            message: 'name is required of string in dataToUpdate',
-            code: '400'
-          };
 
+          errorMessage.message = 'name is required of string in dataToUpdate';
           throw errorMessage;
-        } else if (typeof dataToUpdate.location !== 'string' || dataToUpdate.location.trim() === '') {
-          const errorMessage: IError = {
-            message: 'location is required of string in dataToUpdate',
-            code: '400'
-          };
 
+        } else if (typeof dataToUpdate.address !== 'string' || dataToUpdate.address.trim() === '') {
+
+          errorMessage.message = 'address is required of string in dataToUpdate';
+          throw errorMessage;
+        }
+
+        if (typeof dataToUpdate.email !== 'string' || dataToUpdate.email.trim() === '') {
+
+          errorMessage.message = 'email is required of string in dataToUpdate';
+          throw errorMessage;
+
+        } else if (typeof dataToUpdate.mobileNumber !== 'number') {
+
+          errorMessage.message = 'mobileNumber is required of number in dataToUpdate';
+          throw errorMessage;
+        }
+
+        if (typeof dataToUpdate.dob !== 'string' || dataToUpdate.dob.trim() === '') {
+
+          errorMessage.message = 'dob is required of string and valid date (MM/DD/YYYY) in dataToUpdate';
+          throw errorMessage;
+
+        } else if (typeof dataToUpdate.hobbies !== 'object' || (!Array.isArray(dataToUpdate.hobbies))) {
+
+          errorMessage.message = 'hobbies is required of string in dataToUpdate';
           throw errorMessage;
         }
 

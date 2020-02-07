@@ -1,7 +1,9 @@
 import { Iuser, Ipermissions } from './utils/interfaces';
 
+export enum PermissionType { read = 'read', write = 'write', delete = 'delete' }
+
 // permissions
-const permissions: Ipermissions = {
+export const permissions: Ipermissions = {
   'getUsers' : {
     all: ['head-trainer'],
     read: ['trainee', 'trainer'],
@@ -9,7 +11,7 @@ const permissions: Ipermissions = {
     delete: []
   },
   'trainee' : {
-    all: ['head-trainer'],
+    all: ['trainee'],
     read: ['trainee', 'trainer'],
     write: ['trainer'],
     delete: []
@@ -17,11 +19,9 @@ const permissions: Ipermissions = {
 };
 
 // list of users
-const users: Iuser[] = [
+export const users: Iuser[] = [
   {
     traineeEmail: 'trainee1@successive.tech',
     reviewerEmail: 'reviewer1@successive.tech',
   }
 ];
-
-export { users, permissions };

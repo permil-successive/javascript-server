@@ -10,24 +10,38 @@ export default class UserRepository {
     this._userModel = userModel;
   }
 
+  private generateId(): string {
+    return mongoose.Types.ObjectId().toHexString();
+  }
+
   counts() {
-    return this._userModel.count({});
+    return this._userModel.countDocuments({});
   }
 
   create(data) {
-    return this._userModel.create(data);
+    const userData = {
+      _id: this.generateId(),
+      ...data
+    };
+    console.log(userData);
+    return this._userModel.create(userData);
   }
 
-  update(data, id) {
-    return this._userModel.findByIdAndUpdate(id, data);
+  findOne(query) {
+    return this._userModel.findOne(query);
   }
 
-  deleteFunction(id) {
-    return this._userModel.findByIdAndDelete(id);
+  update(id, data) {
+    return this._userModel.findOneAndUpdate({_id: id}, data.dataToUpdate);
   }
 
-  list(id) {
-    return this._userModel.findById(id);
+  delete(id) {
+    const userData = {_id: id};
+    return this._userModel.findOneAndDelete(userData);
+  }
+
+  list() {
+    return this._userModel.find();
   }
 
 }

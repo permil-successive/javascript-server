@@ -19,7 +19,7 @@ class Controller {
     return this.instance;
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
+  create = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       sendResponse(await this.userRepository.create(req.body), res, 'data inserted');
@@ -28,7 +28,11 @@ class Controller {
     }
   }
 
-  async list(req: Request, res: Response, next: NextFunction) {
+  list = async (req: Request, res: Response, next: NextFunction) => {
+
+    console.log('UserRepo');
+    console.log(this);
+    console.log(this.userRepository);
 
     try {
       sendResponse(await this.userRepository.list(req.body), res, 'data fetched');
@@ -37,17 +41,17 @@ class Controller {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
+  update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      sendResponse(await this.userRepository.update(req.body), res, 'data updated');
+      sendResponse(await this.userRepository.update(req.body.id, req.body), res, 'data updated');
     } catch (err) {
       next(err);
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      sendResponse(await this.userRepository.list(req.body), res, 'data deleted');
+      sendResponse(await this.userRepository.delete(req.params.id), res, 'data deleted');
     } catch (err) {
       next(err);
     }

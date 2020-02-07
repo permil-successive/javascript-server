@@ -1,5 +1,5 @@
 export { default as errorHandler } from './errorHandler';
-export { notFoundRoute, authorizationHandler } from './routes';
+export { notFoundRoute, authorizationHandler, PermissionType } from './routes';
 export { default as validationHandler } from './validationHandler';
 export { default as sendResponse } from './ResponseHelper';
 export { default as Database } from './Database';

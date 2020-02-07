@@ -53,7 +53,7 @@ function assignDefualtValue(validationConfig, toValidate): any {
 function isRegex(validationConfig, toValidate: string, key: string): boolean {
 
   const regex: RegExp = validationConfig.regex;
-  if (regex && regex.test(toValidate)) {
+  if (regex && (!regex.test(toValidate))) {
     console.debug(`error in regex`);
     const error: IError = {
       message: `${key} is not as per required data. `,

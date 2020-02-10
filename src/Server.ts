@@ -3,6 +3,7 @@ import { IConfig } from './config';
 import * as bodyParser from 'body-parser';
 import { errorHandler, notFoundRoute } from './libs';
 import mainRouter from './router';
+import Database from './libs/Database';
 
 export default class Server {
 
@@ -39,13 +40,17 @@ export default class Server {
   }
 
   run(): Server {
-    this.app.listen(this.config.port, (err) => {
-      if (err) {
-        console.error(err);
-        throw err;
-      }
-
-      console.log(`Server is running on ${this.config.port}`);
+    const database: Database = new Database(this.config.mongoUri);
+    database.open().then(() => {
+      this.app.listen(this.config.port, (err) => {
+        if (err) {
+          console.error(err);
+          throw err;
+        }
+        console.log(`Server is running on ${this.config.port}`);
+      });
+    }).catch((err) => {
+      console.error(err);
     });
     return this;
   }

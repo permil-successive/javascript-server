@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import IResponse from '../../IResponse';
+import { sendResponse } from '../../libs';
 
 class Controller {
 
@@ -22,14 +23,7 @@ class Controller {
       location : 'Noida'
     };
 
-    const responseMessage: IResponse = {
-      message: 'Record inserted successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: traineeData
-    };
-
-    res.status(200).send(responseMessage);
+    sendResponse(traineeData, res, 'done');
   }
 
   list(req: Request, res: Response): void {
@@ -45,14 +39,7 @@ class Controller {
       }
     ];
 
-    const responseMessage: IResponse = {
-      message: 'Record fetched successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: traineeData
-    };
-
-    res.status(200).send(responseMessage);
+    sendResponse(traineeData, res);
   }
 
   update(req: Request, res: Response): void {
@@ -62,14 +49,7 @@ class Controller {
       location : 'Noida'
     };
 
-    const responseMessage: IResponse = {
-      message: 'Record updated successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: traineeData
-    };
-
-    res.status(200).send(responseMessage);
+    sendResponse(traineeData, res);
   }
 
   delete(req: Request, res: Response): void {
@@ -79,14 +59,7 @@ class Controller {
       location : 'Noida'
     };
 
-    const responseMessage: IResponse = {
-      message: 'Record deleted successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: traineeData
-    };
-
-    res.status(200).send(responseMessage);
+    sendResponse(traineeData, res);
   }
 }
 

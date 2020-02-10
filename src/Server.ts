@@ -15,8 +15,8 @@ export default class Server {
   bootstrap(): Server {
     this.initBodyParser();
     this.setupRoutes();
-    this.app.use(notFoundRoute);
-    this.app.use(errorHandler);
+    this.app.use(notFoundRoute); // firing route not found error
+    this.app.use(errorHandler); // attaching error handler
     return this;
   }
 
@@ -33,13 +33,6 @@ export default class Server {
     this.app.get('/health-check', (req: express.Request, res: express.Response): void => {
 
       res.send('I am OK');
-    });
-
-    this.app.get('/body-parser', (req: express.Request, res: express.Response): void => {
-
-      console.log('user send data : ');
-      console.log(req.body);
-      res.send('Ok');
     });
 
     this.app.use('/api', mainRouter);

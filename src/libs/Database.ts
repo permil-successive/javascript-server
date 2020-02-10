@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import userSeedData from './seedData';
 
 export default class Database {
 
@@ -8,14 +9,13 @@ export default class Database {
 
     return new Promise<any>(async (resolve, reject) => {
 
-      await mongoose.connect(this.mongoUri, { useNewUrlParser: true }, (err) => {
-
-        if (err)
-          return reject(err);
-
+      try {
+        await mongoose.connect(this.mongoUri, { useNewUrlParser: true });
         console.info(`Database is connect@${this.mongoUri}`);
-        resolve();
-      });
+        resolve(userSeedData());
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 

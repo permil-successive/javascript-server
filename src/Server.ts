@@ -3,7 +3,7 @@ import { IConfig } from './config';
 import * as bodyParser from 'body-parser';
 import { errorHandler, notFoundRoute } from './libs';
 import mainRouter from './router';
-import Database from './libs/Database';
+import { Database } from './libs';
 
 export default class Server {
 

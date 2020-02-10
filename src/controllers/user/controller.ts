@@ -1,11 +1,15 @@
-import { Request, Response } from 'express';
-import IResponse from '../../IResponse';
+import { Request, Response, NextFunction } from 'express';
+import { sendResponse } from '../../libs';
+import { UserRepository } from '../../repositories';
 
 class Controller {
 
   static instance: Controller;
+  private userRepository;
 
-  private constructor() { }
+  private constructor() {
+    this.userRepository = new UserRepository();
+   }
 
   static getInstance(): Controller {
     if (this.instance)
@@ -15,78 +19,42 @@ class Controller {
     return this.instance;
   }
 
-  create(req: Request, res: Response): void {
-    const userData = {
-      id : 1,
-      name : 'Vinay',
-      location : 'Noida'
-    };
+  create = async (req: Request, res: Response, next: NextFunction) => {
 
-    const responseMessage: IResponse = {
-      message: 'Record inserted successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: userData
-    };
-
-    res.status(200).send(responseMessage);
+    try {
+      sendResponse(await this.userRepository.create(req.body), res, 'data inserted');
+    } catch (err) {
+      next(err);
+    }
   }
 
-  list(req: Request, res: Response): void {
-    const userData = [
-      {
-        id : 1,
-        name : 'Vinay',
-        location : 'Noida'
-      }, {
-        id : 1,
-        name : 'Vinay',
-        location : 'Noida'
-      }
-    ];
+  list = async (req: Request, res: Response, next: NextFunction) => {
 
-    const responseMessage: IResponse = {
-      message: 'Record fetched successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: userData
-    };
+    console.log('UserRepo');
+    console.log(this);
+    console.log(this.userRepository);
 
-    res.status(200).send(responseMessage);
+    try {
+      sendResponse(await this.userRepository.list(req.body), res, 'data fetched');
+    } catch (err) {
+      next(err);
+    }
   }
 
-  update(req: Request, res: Response): void {
-    const userData = {
-      id : 1,
-      name : 'Vinay',
-      location : 'Noida'
-    };
-
-    const responseMessage: IResponse = {
-      message: 'Record updated successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: userData
-    };
-
-    res.status(200).send(responseMessage);
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      sendResponse(await this.userRepository.update(req.body.id, req.body), res, 'data updated');
+    } catch (err) {
+      next(err);
+    }
   }
 
-  delete(req: Request, res: Response): void {
-    const userData = {
-      id : 1,
-      name : 'Vinay',
-      location : 'Noida'
-    };
-
-    const responseMessage: IResponse = {
-      message: 'Record deleted successfully.',
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      data: userData
-    };
-
-    res.status(200).send(responseMessage);
+  delete = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      sendResponse(await this.userRepository.delete(req.params.id), res, 'data deleted');
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

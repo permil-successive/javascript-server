@@ -4,14 +4,14 @@ export enum PermissionType { read = 'read', write = 'write', delete = 'delete' }
 
 // permissions
 export const permissions: Ipermissions = {
-  'getUsers' : {
+  'users' : {
     all: ['head-trainer'],
     read: ['trainee', 'trainer'],
     write: ['trainer'],
     delete: []
   },
   'trainee' : {
-    all: ['head-trainer'],
+    all: [],
     read: ['trainee', 'trainer'],
     write: ['trainer'],
     delete: []

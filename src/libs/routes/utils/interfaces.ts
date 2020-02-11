@@ -1,5 +1,5 @@
 interface Ipermissions {
-  getUsers: IgetUser;
+  users: IgetUser;
   trainee: IgetUser;
 }
 

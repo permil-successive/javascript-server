@@ -21,8 +21,8 @@ export default (currentModule: string, permissionType: string) => async (req: IR
 
   try {
 
-    const token = req.headers.authorization;
-    console.debug(token);
+    const { authorization: token } = req.headers;
+    console.debug('token = ', token);
     const decodedUser = jwt.verify(token, config.secretKey);
 
     const error: IError = {
@@ -32,7 +32,7 @@ export default (currentModule: string, permissionType: string) => async (req: IR
 
     console.debug('decoded user = ', decodedUser);
 
-    if (!decodedUser) {
+    if (!decodedUser.id) {
       console.info('invalid token or user not decoded');
       return next(error);
     }

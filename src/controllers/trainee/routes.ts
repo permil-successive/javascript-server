@@ -12,7 +12,6 @@ traineeRoutes.route('/')
 .get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
 .post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
 .put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update)
-.delete(authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
 
 traineeRoutes.delete('/:id', authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
 

@@ -2,13 +2,8 @@ import IResponse from './IResponse';
 import { Response } from 'express';
 
 class ResponseHelper {
-  /**
-   *
-   * @param data any data in response
-   * @param message message of response
-   * @param res response object of express
-   */
-  static sendResponse(data: any, res: Response, message: string = 'successful') {
+
+  static constructResponse(data: any, message: string = 'successful') {
     const responseMessage: IResponse = {
       'message': message,
       status: 'OK',
@@ -16,8 +11,13 @@ class ResponseHelper {
       'data': data
     };
 
-    res.status(200).send(responseMessage);
+    return responseMessage;
+  }
+
+  static sendResponse(resData: any, res: Response, resCode: number = 200) {
+
+    res.status(resCode).send(resData);
   }
 }
 
-export default ResponseHelper.sendResponse;
+export default ResponseHelper;

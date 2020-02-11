@@ -6,7 +6,7 @@ export {
   authorizationHandler,
   validationHandler,
   errorHandler,
-  sendResponse,
+  ResponseHelper,
   IRequest,
   IError
 } from './routes';

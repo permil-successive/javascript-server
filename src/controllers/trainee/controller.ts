@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendResponse } from '../../libs';
+import { ResponseHelper } from '../../libs';
 
 class Controller {
 
@@ -22,7 +22,8 @@ class Controller {
       location : 'Noida'
     };
 
-    sendResponse(traineeData, res, 'done');
+    const response = ResponseHelper.constructResponse(traineeData, 'done');
+    ResponseHelper.sendResponse(response, res);
   }
 
   list(req: Request, res: Response): void {
@@ -38,7 +39,8 @@ class Controller {
       }
     ];
 
-    sendResponse(traineeData, res);
+    const response = ResponseHelper.constructResponse(traineeData, 'done');
+    ResponseHelper.sendResponse(response, res);
   }
 
   update(req: Request, res: Response): void {
@@ -48,7 +50,8 @@ class Controller {
       location : 'Noida'
     };
 
-    sendResponse(traineeData, res);
+    const response = ResponseHelper.constructResponse(traineeData, 'done');
+    ResponseHelper.sendResponse(response, res);
   }
 
   delete(req: Request, res: Response): void {
@@ -58,7 +61,8 @@ class Controller {
       location : 'Noida'
     };
 
-    sendResponse(traineeData, res);
+    const response = ResponseHelper.constructResponse(traineeData, 'done');
+    ResponseHelper.sendResponse(response, res);
   }
 }
 

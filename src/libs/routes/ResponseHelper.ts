@@ -1,4 +1,4 @@
-import IResponse from '../IResponse';
+import IResponse from './IResponse';
 import { Response } from 'express';
 
 class ResponseHelper {
@@ -8,7 +8,7 @@ class ResponseHelper {
    * @param message message of response
    * @param res response object of express
    */
-  static sendResponse(data: any, res: Response, message: string = 'sucessful') {
+  static sendResponse(data: any, res: Response, message: string = 'successful') {
     const responseMessage: IResponse = {
       'message': message,
       status: 'OK',

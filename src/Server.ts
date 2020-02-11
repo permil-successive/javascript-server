@@ -44,7 +44,6 @@ export default class Server {
     database.open().then(() => {
       this.app.listen(this.config.port, (err) => {
         if (err) {
-          console.error(err);
           throw err;
         }
         console.log(`Server is running on ${this.config.port}`);

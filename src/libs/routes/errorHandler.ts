@@ -2,6 +2,9 @@ import IError from './IError';
 import IErrorHandlerResponse from './IErrorHandlerResponse';
 import { Request, Response, NextFunction } from 'express';
 
+/**
+ * construct the standard JSON error object
+ */
 const formatError = (err: IError): IErrorHandlerResponse => {
 
   console.debug('===========inside format error==================');
@@ -15,6 +18,9 @@ const formatError = (err: IError): IErrorHandlerResponse => {
   };
 };
 
+/**
+ * constructing an error object for response
+ */
 const constructErrors = (err: IError): IErrorHandlerResponse[] => {
 
   console.debug('===========inside format error==================');
@@ -32,6 +38,7 @@ const constructErrors = (err: IError): IErrorHandlerResponse[] => {
   return errors;
 };
 
+
 const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFunction) => {
 
   console.debug('===================inside error handler===============================');
@@ -41,7 +48,7 @@ const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFuncti
 
   errors = constructErrors(err);
 
-  console.info(errors);
+  console.info('errors = ', errors);
 
   res.status(err.code || err[0].code || 500).send(errors); // sending error to client
 };

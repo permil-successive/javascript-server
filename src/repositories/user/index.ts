@@ -1,3 +1,5 @@
-import UserRepository from './UserRepository';
+export { default as IUserModel } from './IUserModel';
+export { default as UserRepository } from './UserRepository';
 
-export { UserRepository };
+// import UserRepository from './UserRepository';
+// export { UserRepository };

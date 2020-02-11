@@ -1,5 +1,3 @@
-import validateUsers from './validation';
-import hasPermission from './permissions';
-
-
-export { validateUsers, hasPermission };
+export { default as validateUsers } from './validation';
+export { default as hasPermission } from './permissions';
+export { Ipermissions, IgetUser, Iuser, IvalidatedUsers } from './interfaces';

@@ -1,4 +1,4 @@
-import { Iuser, Ipermissions } from './utils/interfaces';
+import { Iuser, Ipermissions } from './routes/utils';
 
 export enum PermissionType { read = 'read', write = 'write', delete = 'delete' }
 

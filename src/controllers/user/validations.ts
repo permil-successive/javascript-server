@@ -1,4 +1,4 @@
-import IError from '../../libs/IError';
+import { IError } from '../../libs';
 
 export default {
   create: {

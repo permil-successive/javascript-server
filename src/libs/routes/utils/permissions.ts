@@ -1,4 +1,4 @@
-import { permissions } from '../constants';
+import { permissions } from '../../constants';
 import { IgetUser } from './interfaces';
 
 /**

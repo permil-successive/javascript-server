@@ -1,13 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import IError from '../IError';
+import IError from './IError';
 import config from '../../config/configuration';
-import { hasPermission } from './utils/index';
-import { UserRepository } from '../../repositories';
+import { hasPermission } from './utils';
+import { UserRepository, IUserModel } from '../../repositories';
 import IRequest from './IRequest';
 
 const ERROR_CODE = '401';
 
+/**
+ * validate the user from the request
+ *
+ *  @param currentModule name of the module user accessing
+ *  @param permissionType type of permission required to complete the request like read, write, delete
+ *
+ *  @returns express request handler
+ */
 export default (currentModule: string, permissionType: string) => async (req: IRequest, res: Response, next: NextFunction) => {
   console.info('==============inside auth middleware===================');
 
@@ -30,8 +38,8 @@ export default (currentModule: string, permissionType: string) => async (req: IR
     }
 
     // repo
-    const userRepository = new UserRepository();
-    const user = await userRepository.findOne({
+    const userRepository: UserRepository = new UserRepository();
+    const user: IUserModel = await userRepository.findOne({
       _id : decodedUser.id,
       email: decodedUser.email
     });

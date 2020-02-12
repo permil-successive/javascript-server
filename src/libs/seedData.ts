@@ -15,7 +15,7 @@ async function userSeedData() {
 
   try {
     if ( await userRepository.counts() === 0)
-      await userRepository.create(user);
+      await userRepository.create(user, 'seed');
   } catch (err) {
     console.error(err);
   }

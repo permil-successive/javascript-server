@@ -19,10 +19,10 @@ class Controller {
     return this.instance;
   }
 
-  create = async (req: Request, res: Response, next: NextFunction) => {
+  create = async (req: IRequest, res: Response, next: NextFunction) => {
 
     try {
-      const data = await this.userRepository.create(req.body);
+      const data = await this.userRepository.create(req.body, req.user.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data inserted');
       ResponseHelper.sendResponse(response, res);
@@ -53,9 +53,9 @@ class Controller {
     }
   }
 
-  update = async (req: Request, res: Response, next: NextFunction) => {
+  update = async (req: IRequest, res: Response, next: NextFunction) => {
     try {
-      const data = await this.userRepository.update(req.body.id, req.body);
+      const data = await this.userRepository.update(req.body.id, req.body.dataToUpdate, req.user.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data updated');
       ResponseHelper.sendResponse(response, res);
@@ -64,9 +64,9 @@ class Controller {
     }
   }
 
-  delete = async (req: Request, res: Response, next: NextFunction) => {
+  delete = async (req: IRequest, res: Response, next: NextFunction) => {
     try {
-      const data = await this.userRepository.delete(req.params.id);
+      const data = await this.userRepository.delete(req.params.id, req.user.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data deleted');
       ResponseHelper.sendResponse(response, res);

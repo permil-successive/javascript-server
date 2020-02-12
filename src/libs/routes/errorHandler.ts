@@ -8,10 +8,9 @@ import { Request, Response, NextFunction } from 'express';
 const formatError = (err: IError): IErrorHandlerResponse => {
 
   console.debug('===========inside format error==================');
-  console.debug('err = ', err);
 
   return {
-    error: `${err.code} - ${err.message}`,
+    error: `${err.code || 500 } - ${err.message}`,
     message: err.message,
     status: 'Error',
     timestamp: new Date().toISOString()
@@ -23,8 +22,7 @@ const formatError = (err: IError): IErrorHandlerResponse => {
  */
 const constructErrors = (err: IError): IErrorHandlerResponse[] => {
 
-  console.debug('===========inside format error==================');
-  console.debug('err = ', err);
+  console.debug('===========inside construct error==================');
 
   const errors: IErrorHandlerResponse[] = [];
   if (Array.isArray(err)) {
@@ -50,7 +48,10 @@ const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFuncti
 
   console.info('errors = ', errors);
 
-  res.status(err.code || err[0].code || 500).send(errors); // sending error to client
+  let errorCode = err.code || (err[0] && err[0].code) || 500;
+  errorCode = (200 > errorCode && errorCode < 600) ? errorCode : 500;
+
+  res.status(errorCode).send(errors); // sending error to client
 };
 
 export default ErrorHandler;

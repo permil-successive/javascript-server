@@ -44,7 +44,7 @@ class Controller {
   list = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const data = await this.userRepository.list(parseInt(req.query.skip, 10), parseInt(req.query.limit, 10));
+      const data = await this.userRepository.list(req.query.skip, req.query.limit);
 
       const response = ResponseHelper.constructResponse(data, 'data fetched');
       ResponseHelper.sendResponse(response, res);

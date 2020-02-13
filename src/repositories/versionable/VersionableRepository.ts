@@ -57,17 +57,17 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
   }
 
   async findOne(query, password: boolean = false): Promise<D> {
-    let abcd = {};
-    if (query.id || query._id) {
-      abcd = { originalId: query.id || query._id };
-      delete query.id;
-      delete query._id;
-    }
+    let orgIdObj = {};
+    if (query.id || query._id)
+      orgIdObj = { originalId: query.id || query._id };
 
-    const myquery = {...abcd, ...query, ...this._deleteQuery};
-    console.log(myquery);
+    const myQuery = {...orgIdObj, ...query, ...this._deleteQuery};
+    delete myQuery.id;
+    delete myQuery._id;
+
+    console.log(myQuery);
     const projection = password ? '' : '-password';
-    return await this.model.findOne(myquery, projection);
+    return await this.model.findOne(myQuery, projection);
   }
 
   async update(id, data, currentUser: string): Promise<D> {
@@ -76,6 +76,7 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     if (!originalData) {
       throw new Error('record for this ID doesn\'t exist');
     }
+
     const dataToUpdate = {
       ...originalData.toJSON(),
       _id: this.generateId(),
@@ -84,6 +85,7 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
       ...data
     };
     console.info('dataToUpdate = ', dataToUpdate);
+
     const updatedData = await this.model.create(dataToUpdate);
     if (!updatedData) {
       throw {

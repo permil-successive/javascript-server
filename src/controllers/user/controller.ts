@@ -9,6 +9,7 @@ class Controller {
 
   static instance: Controller;
   private userRepository: UserRepository;
+  private _TOKEN_TIMEOUT = Math.floor(Date.now() / 1000) + ( 15 * 60 ); // 15 min
 
   private constructor() {
     this.userRepository = new UserRepository();
@@ -101,9 +102,8 @@ class Controller {
         throw new Error('Incorrect username/password');
       }
 
-      const TimeOut = Math.floor(Date.now() / 1000) + ( 15 * 60 );
       const { originalId: id, role, name } = user;
-      const payload = { iss: 'Successive Technologies', exp: TimeOut, email, id, role, name };
+      const payload = { iss: 'Successive Technologies', exp: this._TOKEN_TIMEOUT, email, id, role, name };
 
       const token = jsonwebtoken.sign(payload, secretKey);
       const response = ResponseHelper.constructResponse(token);

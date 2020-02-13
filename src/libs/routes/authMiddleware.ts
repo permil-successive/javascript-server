@@ -51,6 +51,8 @@ export default (currentModule: string, permissionType: string) => async (req: IR
 
     req.user = user; // assigning user to request for further use
 
+    console.log(">>>>>>>>", req.user);
+
     if (!hasPermission(currentModule, user.role, permissionType)) {
       console.info(`unauthorised access to ${user.role} while ${permissionType} in ${currentModule}`);
       return next(error);

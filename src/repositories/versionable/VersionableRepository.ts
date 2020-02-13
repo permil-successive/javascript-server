@@ -52,12 +52,22 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
         message: 'operation not performed',
         code: this._ERROR_CODE
       };
+    createdData.set('password', undefined);
     return createdData;
   }
 
-  async findOne(query): Promise<D> {
-    const myquery = {originalId: query.id || query._id, ...query, ...this._deleteQuery};
-    return await this.model.findOne(myquery);
+  async findOne(query, password: boolean = false): Promise<D> {
+    let abcd = {};
+    if (query.id || query._id) {
+      abcd = { originalId: query.id || query._id };
+      delete query.id;
+      delete query._id;
+    }
+
+    const myquery = {...abcd, ...query, ...this._deleteQuery};
+    console.log(myquery);
+    const projection = password ? '' : '-password';
+    return await this.model.findOne(myquery, projection);
   }
 
   async update(id, data, currentUser: string): Promise<D> {
@@ -67,19 +77,28 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
       throw new Error('record for this ID doesn\'t exist');
     }
     const dataToUpdate = {
+      ...originalData.toJSON(),
       _id: this.generateId(),
-      originalId: originalData.originalId,
       updatedAt: new Date().toISOString(),
       ...this.generateBy(currentUser),
       ...data
     };
+    console.info('dataToUpdate = ', dataToUpdate);
     const updatedData = await this.model.create(dataToUpdate);
-    const updatedPreviousData = await this.model.findByIdAndUpdate({ _id: originalData._id }, this.generateDeletedBy(currentUser));
-    if (!updatedData && !updatedPreviousData)
+    if (!updatedData) {
       throw {
         message: 'operation not performed',
         code: this._ERROR_CODE
       };
+    }
+
+    const updatedPreviousData = await this.model.findByIdAndUpdate({ _id: originalData._id }, this.generateDeletedBy(currentUser));
+    if (!updatedPreviousData)
+      throw {
+        message: 'operation not performed',
+        code: this._ERROR_CODE
+      };
+    updatedData.set('password', undefined);
     return updatedData;
   }
 
@@ -91,11 +110,12 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
         message: 'operation not performed',
         code: this._ERROR_CODE
       };
+    data.set('password', undefined);
     return data;
   }
 
   async list(skip: number, limit: number): Promise<D[]> {
     const query = { ...this._deleteQuery };
-    return await this.model.find(query).skip(skip).limit(limit);
+    return await this.model.find(query, '-password').skip(skip).limit(limit);
   }
 }

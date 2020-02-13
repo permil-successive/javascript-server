@@ -9,6 +9,7 @@ export default class UserSchema extends VersionableSchema {
       role: String,
       address: String,
       email: String,
+      password: String,
       // {
       //   type: String,
       //   unique: true,

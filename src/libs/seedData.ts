@@ -5,7 +5,7 @@ const userRepository = new UserRepository();
 async function userSeedData() {
   const user = {
     name: 'Vinay',
-    role: 'Head-Trainer',
+    role: 'head-trainer',
     address: 'Noida',
     dob: new Date('01-01-1993'),
     email: 'vinay@successive.tech',

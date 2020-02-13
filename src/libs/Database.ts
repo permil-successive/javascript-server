@@ -12,9 +12,9 @@ export default class Database {
       try {
         await mongoose.connect(this.mongoUri, { useNewUrlParser: true });
         console.info(`Database is connect@${this.mongoUri}`);
-        resolve(userSeedData());
+        return resolve(userSeedData());
       } catch (err) {
-        reject(err);
+        return reject(err);
       }
     });
   }

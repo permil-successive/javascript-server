@@ -1,18 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import IError from '../IError';
+import IError from './IError';
 import config from '../../config/configuration';
-import { hasPermission } from './utils/index';
+import { hasPermission } from './utils';
+import { UserRepository, IUserModel } from '../../repositories';
+import IRequest from './IRequest';
 
 const ERROR_CODE = '401';
 
-export default (currentModule: string, permissionType: string) => (req: Request, res: Response, next: NextFunction) => {
+/**
+ * validate the user from the request
+ *
+ *  @param currentModule name of the module user accessing
+ *  @param permissionType type of permission required to complete the request like read, write, delete
+ *
+ *  @returns express request handler
+ */
+export default (currentModule: string, permissionType: string) => async (req: IRequest, res: Response, next: NextFunction) => {
   console.info('==============inside auth middleware===================');
 
   try {
 
-    const token = req.headers.authorization;
-    console.debug(token);
+    const { authorization: token } = req.headers;
+    console.debug('token = ', token);
     const decodedUser = jwt.verify(token, config.secretKey);
 
     const error: IError = {
@@ -22,13 +32,27 @@ export default (currentModule: string, permissionType: string) => (req: Request,
 
     console.debug('decoded user = ', decodedUser);
 
-    if (!decodedUser) {
+    if (!decodedUser.id) {
       console.info('invalid token or user not decoded');
       return next(error);
     }
 
-    if (!hasPermission(currentModule, decodedUser.role, permissionType)) {
-      console.info(`unauthorised access to ${decodedUser.role} while ${permissionType} in ${currentModule}`);
+    // repo
+    const userRepository: UserRepository = new UserRepository();
+    const user: IUserModel = await userRepository.findOne({
+      _id : decodedUser.id,
+      email: decodedUser.email
+    });
+
+    if (!user) {
+      console.info('given user doesn\'t exist');
+      return next(error);
+    }
+
+    req.user = user; // assigning user to request for further use
+
+    if (!hasPermission(currentModule, user.role, permissionType)) {
+      console.info(`unauthorised access to ${user.role} while ${permissionType} in ${currentModule}`);
       return next(error);
     }
 

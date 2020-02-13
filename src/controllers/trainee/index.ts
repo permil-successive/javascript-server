@@ -1,3 +1,1 @@
-import routes from './routes';
-
-export default routes;
+export { default as traineeRoutes } from './routes';

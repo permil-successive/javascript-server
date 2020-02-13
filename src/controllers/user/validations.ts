@@ -1,4 +1,4 @@
-import IError from '../../libs/IError';
+import { IError } from '../../libs';
 
 export default {
   create: {
@@ -36,11 +36,9 @@ export default {
       in: [ 'body' ],
       errorMessage: 'dob is required and must be a valid date',
       custom: (value) => {
-        try {
-          new Date(value);
-        } catch (err) {
+        if ( isNaN(Date.parse(value)) ) {
           const errorMessage: IError = {
-            message: err.name,
+            message: 'Invalid Date',
             code: '400'
           };
 
@@ -87,7 +85,7 @@ export default {
       default: 10,
       number: true,
       in: ['query'],
-      errorMessage: 'imit is invalid',
+      errorMessage: 'limit is invalid',
     }
   },
   update: {

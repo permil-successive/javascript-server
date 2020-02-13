@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { sendResponse } from '../../libs';
+import { ResponseHelper, IRequest } from '../../libs';
 import { UserRepository } from '../../repositories';
 
 class Controller {
@@ -22,7 +22,20 @@ class Controller {
   create = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      sendResponse(await this.userRepository.create(req.body), res, 'data inserted');
+      const data = await this.userRepository.create(req.body);
+
+      const response = ResponseHelper.constructResponse(data, 'data inserted');
+      ResponseHelper.sendResponse(response, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  fetchMe = async (req: IRequest, res: Response, next: NextFunction) => {
+
+    try {
+      const response = ResponseHelper.constructResponse(req.user, 'data fetched');
+      ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
     }
@@ -30,12 +43,11 @@ class Controller {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.log('UserRepo');
-    console.log(this);
-    console.log(this.userRepository);
-
     try {
-      sendResponse(await this.userRepository.list(req.body), res, 'data fetched');
+      const data = await this.userRepository.list(req.query.skip, req.query.limit);
+
+      const response = ResponseHelper.constructResponse(data, 'data fetched');
+      ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
     }
@@ -43,7 +55,10 @@ class Controller {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      sendResponse(await this.userRepository.update(req.body.id, req.body), res, 'data updated');
+      const data = await this.userRepository.update(req.body.id, req.body);
+
+      const response = ResponseHelper.constructResponse(data, 'data updated');
+      ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
     }
@@ -51,7 +66,10 @@ class Controller {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      sendResponse(await this.userRepository.delete(req.params.id), res, 'data deleted');
+      const data = await this.userRepository.delete(req.params.id);
+
+      const response = ResponseHelper.constructResponse(data, 'data deleted');
+      ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
     }

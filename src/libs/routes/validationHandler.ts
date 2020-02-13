@@ -61,7 +61,7 @@ function isRegex(validationConfig, toValidate: string, key: string): boolean {
     };
     throw error;
   } else {
-    return true;
+    return validationConfig.regex;
   }
 }
 
@@ -89,7 +89,7 @@ function isRequired(validationConfig, toValidate, key: string): boolean {
     throw error;
   }
 
-  return true;
+  return validationConfig.required;
 }
 
 /**
@@ -111,7 +111,7 @@ function isString(validationConfig, toValidate, key: string): boolean {
     throw error;
   }
 
-  return true;
+  return validationConfig.string;
 }
 
 /**
@@ -132,7 +132,7 @@ function isNumber(validationConfig, toValidate, key: string): boolean {
     throw error;
   }
 
-  return true;
+  return validationConfig.number;
 }
 
 /**
@@ -153,7 +153,7 @@ function isObject(validationConfig, toValidate, key: string): boolean {
     throw error;
   }
 
-  return true;
+  return validationConfig.isObject;
 }
 
 /**
@@ -169,7 +169,7 @@ function isCustom(validationConfig, toValidate): boolean {
     return false;
   }
 
-  return true;
+  return validationConfig.custom;
 }
 
 export default (config) => (req: Request, res: Response, next: NextFunction) => {
@@ -230,7 +230,8 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       try {
         isRequired(validationConfig, toValidate, key);
         isString(validationConfig, toValidate, key);
-        isNumber(validationConfig, toValidate, key);
+        if (isNumber(validationConfig, toValidate, key))
+          toValidate = req[element][key] = parseInt(toValidate, 10); // assigning back number
         isObject(validationConfig, toValidate, key);
         isRegex(validationConfig, toValidate, key);
         isCustom(validationConfig, toValidate);

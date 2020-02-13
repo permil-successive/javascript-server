@@ -7,7 +7,10 @@ export default class UserSchema extends mongoose.Schema {
       name: String,
       role: String,
       address: String,
-      email: String,
+      email: {
+        type: String,
+        unique: true,
+      },
       mobileNumber: Number,
       dob: Date,
       hobbies: [String]

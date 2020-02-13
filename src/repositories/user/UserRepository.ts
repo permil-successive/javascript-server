@@ -5,6 +5,7 @@ import userModel from './UserModel';
 export default class UserRepository {
 
   private _userModel: mongoose.Model<IUserModel>;
+  private _ERROR_CODE = 400;
 
   constructor() {
     this._userModel = userModel;
@@ -18,30 +19,48 @@ export default class UserRepository {
     return this._userModel.countDocuments({});
   }
 
-  create(data) {
+  async create(data) {
     const userData = {
       _id: this.generateId(),
       ...data
     };
     console.log(userData);
-    return this._userModel.create(userData);
+    const createdData = await this._userModel.create(userData);
+    if (!createdData)
+      throw {
+        message: 'operation not performed',
+        code: this._ERROR_CODE
+      };
+    return createdData;
   }
 
   findOne(query) {
     return this._userModel.findOne(query);
   }
 
-  update(id, data) {
-    return this._userModel.findOneAndUpdate({_id: id}, data.dataToUpdate);
+  async update(id, data) {
+    const updatedData = await this._userModel.findOneAndUpdate({_id: id}, data.dataToUpdate);
+    if (!updatedData)
+      throw {
+        message: 'operation not performed',
+        code: this._ERROR_CODE
+      };
+    return updatedData;
   }
 
-  delete(id) {
+  async delete(id) {
     const userData = {_id: id};
-    return this._userModel.findOneAndDelete(userData);
+    const data = await this._userModel.findOneAndDelete(userData);
+    if (!data)
+      throw {
+        message: 'operation not performed',
+        code: this._ERROR_CODE
+      };
+    return data;
   }
 
-  list() {
-    return this._userModel.find();
+  list(skip: number, limit: number) {
+    return this._userModel.find().skip(skip).limit(limit);
   }
 
 }

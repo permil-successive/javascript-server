@@ -14,22 +14,40 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return mongoose.Types.ObjectId().toHexString();
   }
 
-  private generateBy(currentUser: string) {
+  private generateUpdatedInfo(currentUser: string) {
+    if (!currentUser)
+      throw new Error('current user is not provided');
+    return {
+      updatedBy: currentUser,
+      updatedAt: new Date(),
+    };
+  }
+
+  private generateCreatedInfo(currentUser: string) {
     if (!currentUser)
       throw new Error('current user is not provided');
     return {
       createdBy: currentUser,
-      updatedBy: currentUser,
+      createdAt: new Date(),
     };
   }
 
-  private generateDeletedBy(currentUser: string) {
+  private generateDeletedInfo(currentUser: string) {
     if (!currentUser)
       throw new Error('current user is not provided');
     return {
       deletedBy: currentUser,
       deletedAt: new Date(),
     };
+  }
+
+  private isOperationSuccess(res) {
+    if (!res)
+      throw {
+        message: 'operation not performed',
+        code: this._ERROR_CODE
+      };
+    return true;
   }
 
   async counts(): Promise<number> {
@@ -42,16 +60,14 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     const userData = {
       _id: newId,
       originalId: newId,
-      ...this.generateBy(currentUser),
+      ...this.generateCreatedInfo(currentUser),
+      ...this.generateUpdatedInfo(currentUser),
       ...data
     };
 
     const createdData = await this.model.create(userData);
-    if (!createdData)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
+    this.isOperationSuccess(createdData);
+
     createdData.set('password', undefined);
     return createdData;
   }
@@ -80,38 +96,25 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     const dataToUpdate = {
       ...originalData.toJSON(),
       _id: this.generateId(),
-      updatedAt: new Date().toISOString(),
-      ...this.generateBy(currentUser),
+      ...this.generateUpdatedInfo(currentUser),
+      createdBy: this.generateCreatedInfo(currentUser).createdBy,
       ...data
     };
     console.info('dataToUpdate = ', dataToUpdate);
 
     const updatedData = await this.model.create(dataToUpdate);
-    if (!updatedData) {
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
-    }
+    this.isOperationSuccess(updatedData);
 
-    const updatedPreviousData = await this.model.findByIdAndUpdate({ _id: originalData._id }, this.generateDeletedBy(currentUser));
-    if (!updatedPreviousData)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
+    const updatedPreviousData = await this.model.findByIdAndUpdate({ _id: originalData._id }, this.generateDeletedInfo(currentUser));
+    this.isOperationSuccess(updatedPreviousData);
     updatedData.set('password', undefined);
     return updatedData;
   }
 
   async delete(id: string, currentUser: string): Promise<D> {
     const query = { originalId: id, ...this._deleteQuery };
-    const data = await this.model.findOneAndUpdate(query, this.generateDeletedBy(currentUser));
-    if (!data)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
+    const data = await this.model.findOneAndUpdate(query, this.generateDeletedInfo(currentUser));
+    this.isOperationSuccess(data);
     data.set('password', undefined);
     return data;
   }

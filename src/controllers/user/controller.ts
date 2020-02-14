@@ -86,7 +86,7 @@ class Controller {
     }
   }
 
-  login = async (req: IRequest, res: Response, next: NextFunction) => {
+  login = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       const { email, password } = req.body;

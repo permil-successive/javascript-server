@@ -7,7 +7,6 @@ export {
   validationHandler,
   errorHandler,
   ResponseHelper,
-  IRequest,
   IError
 } from './routes';
 

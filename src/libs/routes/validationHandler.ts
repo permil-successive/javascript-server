@@ -215,14 +215,14 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
 
       console.debug(`tovalidate = ${toValidate}`);
 
-      // assigning default value
-      toValidate = req[element][key] = assignDefualtValue(validationConfig, toValidate);
-
       // checking for not required and not supplied variable
       if (!validationConfig.required && toValidate === undefined) {
         console.debug('inside return require');
         return;
       }
+
+      // assigning default value
+      toValidate = req[element][key] = assignDefualtValue(validationConfig, toValidate);
 
       // counting the safe variable
       variableCounts[element]++;

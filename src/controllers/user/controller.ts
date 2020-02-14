@@ -25,6 +25,8 @@ class Controller {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
 
+    console.info('====== inside create controller =======');
+
     try {
       const { user: currentUser } = res.locals;
       const data = await this.userRepository.create(req.body, currentUser.originalId);
@@ -38,6 +40,8 @@ class Controller {
 
   fetchMe = async (req: Request, res: Response, next: NextFunction) => {
 
+    console.info('====== inside fetch controller =======');
+
     try {
       const { user } = res.locals;
       const response = ResponseHelper.constructResponse(user, 'data fetched');
@@ -49,11 +53,14 @@ class Controller {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
 
-    try {
-      const { skip, limit } = req.query;
-      const data = await this.userRepository.list(skip, limit);
+    console.info('====== inside list controller =======');
 
-      const response = ResponseHelper.constructResponse(data, 'data fetched');
+    try {
+      const { skip, limit, sort } = req.query;
+      const count = await this.userRepository.counts();
+      const records = await this.userRepository.list(skip, limit, sort);
+
+      const response = ResponseHelper.constructResponse({ count, records }, 'data fetched');
       ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
@@ -61,6 +68,9 @@ class Controller {
   }
 
   update = async (req: Request, res: Response, next: NextFunction) => {
+
+    console.info('====== inside update controller =======');
+
     try {
       const { id, dataToUpdate } = req.body;
       const { user: currentUser } = res.locals;
@@ -74,6 +84,9 @@ class Controller {
   }
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
+
+    console.info('====== inside delete controller =======');
+
     try {
       const { id } = req.params;
       const { user: currentUser } = res.locals;
@@ -87,6 +100,8 @@ class Controller {
   }
 
   login = async (req: Request, res: Response, next: NextFunction) => {
+
+    console.info('====== inside login controller =======');
 
     try {
       const { email, password } = req.body;

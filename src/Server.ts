@@ -1,6 +1,8 @@
 import *  as express from 'express';
-import { IConfig } from './config';
 import * as bodyParser from 'body-parser';
+import * as swaggerJSDoc from 'swagger-jsdoc';
+import * as swaggerUi from 'swagger-ui-express';
+import { IConfig } from './config';
 import { errorHandler, notFoundRoute } from './libs';
 import mainRouter from './router';
 import { Database } from './libs';
@@ -29,6 +31,30 @@ export default class Server {
     this.app.use(bodyParser.json());
   }
 
+  initSwagger() {
+
+    const swaggerDefinition = {
+      info: {
+        // API informations (required)
+        title: 'Hello World', // Title (required)
+        version: '1.0.0', // Version (required)
+        description: 'A sample API', // Description (optional)
+      },
+      // host, // Host (optional)
+      basePath: '/',
+    };
+
+    const swaggerOptions = {
+      swaggerDefinition, // swagger definition
+      apis: ['dist/controllers/**/**.js'],
+    };
+
+    const swaggerSpec = swaggerJSDoc(swaggerOptions);
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    console.log(swaggerSpec);
+    return swaggerSpec;
+  }
+
   setupRoutes(): void {
 
     this.app.get('/health-check', (req: express.Request, res: express.Response): void => {
@@ -37,6 +63,7 @@ export default class Server {
     });
 
     this.app.use('/api', mainRouter);
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(this.initSwagger()));
   }
 
   run(): Server {

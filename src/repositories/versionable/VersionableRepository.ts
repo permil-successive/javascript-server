@@ -3,7 +3,7 @@ import IVersionableDocument from './IVersionableDocument';
 
 export default class VersionableRepository<D extends IVersionableDocument, M extends mongoose.Model<D>> {
   protected MODEL: M;
-  private readonly ERROR_CODE: number = 400;
+  private readonly ERROR_CODE: number = 422;
   private readonly DELETE_QUERY = { deletedAt: { '$exists': false } };
 
   constructor(model: M) {
@@ -14,25 +14,25 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return mongoose.Types.ObjectId().toHexString();
   }
 
-  private generateUpdatedInfo(currentUser: string) {
+  private getUpdatedInfo(currentUser: string, doneAt: Date = new Date()) {
     if (!currentUser)
       throw new Error('current user is not provided');
     return {
       updatedBy: currentUser,
-      updatedAt: new Date(),
+      updatedAt: doneAt.toISOString(),
     };
   }
 
-  private generateCreatedInfo(currentUser: string) {
+  private getCreatedInfo(currentUser: string, doneAt: Date = new Date()) {
     if (!currentUser)
       throw new Error('current user is not provided');
     return {
       createdBy: currentUser,
-      createdAt: new Date(),
+      createdAt: doneAt.toISOString(),
     };
   }
 
-  private generateDeletedInfo(currentUser: string) {
+  private getDeletedInfo(currentUser: string) {
     if (!currentUser)
       throw new Error('current user is not provided');
     return {
@@ -63,11 +63,12 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     console.info('====== inside create VersionableRepo =======');
 
     const newId = this.generateId();
+    const startedAt = new Date();
     const userData = {
       _id: newId,
       originalId: newId,
-      ...this.generateCreatedInfo(currentUser),
-      ...this.generateUpdatedInfo(currentUser),
+      ...this.getCreatedInfo(currentUser, startedAt),
+      ...this.getUpdatedInfo(currentUser, startedAt),
       ...data
     };
 
@@ -105,8 +106,8 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     const dataToUpdate = {
       ...originalData.toJSON(),
       _id: this.generateId(),
-      ...this.generateUpdatedInfo(currentUser),
-      createdBy: this.generateCreatedInfo(currentUser).createdBy,
+      ...this.getUpdatedInfo(currentUser),
+      createdBy: this.getCreatedInfo(currentUser).createdBy,
       ...data
     };
     console.info('dataToUpdate = ', dataToUpdate);
@@ -114,7 +115,7 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     const updatedData = await this.MODEL.create(dataToUpdate);
     this.isOperationSuccess(updatedData);
 
-    const updatedPreviousData = await this.MODEL.findByIdAndUpdate({ _id: originalData._id }, this.generateDeletedInfo(currentUser));
+    const updatedPreviousData = await this.MODEL.findByIdAndUpdate({ _id: originalData._id }, this.getDeletedInfo(currentUser));
     this.isOperationSuccess(updatedPreviousData);
     return updatedData;
   }
@@ -124,7 +125,7 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     console.info('====== inside delete VersionableRepo =======');
 
     const query = { originalId: id, ...this.DELETE_QUERY };
-    const data = await this.MODEL.findOneAndUpdate(query, this.generateDeletedInfo(currentUser));
+    const data = await this.MODEL.findOneAndUpdate(query, this.getDeletedInfo(currentUser));
     this.isOperationSuccess(data);
     return data;
   }

@@ -7,7 +7,8 @@ export {
   validationHandler,
   errorHandler,
   ResponseHelper,
-  IError
+  IError,
+  validateEmail
 } from './routes';
 
 

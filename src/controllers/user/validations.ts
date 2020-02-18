@@ -103,6 +103,10 @@ export default {
       required: false,
       string: true,
       in: [ 'query' ]
+    },
+    search: {
+      required: false,
+      in: [ 'query' ]
     }
   },
   update: {

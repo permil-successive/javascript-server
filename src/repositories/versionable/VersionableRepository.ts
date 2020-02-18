@@ -130,11 +130,13 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return data;
   }
 
-  protected async list(skip: number, limit: number, projection: string = '', sort: string = ''): Promise<D[]> {
+  protected async list(options): Promise<D[]> {
 
     console.info('====== inside list VersionableRepo =======');
+    // skip: number, limit: number, projection: string = '', sort: string = ''
+    const { skip = 0, limit = 10, projection = '', sort = '', search = '' } = options;
 
-    const query = { ...this.DELETE_QUERY };
+    const query = { ...search, ...this.DELETE_QUERY };
     return await this.MODEL.find(query, projection).skip(skip).limit(limit).sort(sort + ' -updatedAt');
   }
 }

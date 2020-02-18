@@ -1,9 +1,10 @@
 import * as bcrypt from 'bcrypt';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper } from '../../libs';
+import { ResponseHelper, parseStringQuery } from '../../libs';
 import { UserRepository } from '../../repositories';
 import { configuration } from '../../config';
+import { ISearch } from '../../repositories/entities';
 
 class Controller {
 
@@ -61,9 +62,10 @@ class Controller {
     console.info('====== inside list controller =======');
 
     try {
-      const { skip, limit, sort } = req.query;
+      const { skip, limit, sort, search: searchQuery } = req.query;
+      const search: ISearch = parseStringQuery(searchQuery);
       const count = await this.userRepository.counts();
-      const records = await this.userRepository.list(skip, limit, sort);
+      const records = await this.userRepository.list({skip, limit, sort, search });
 
       const response = ResponseHelper.constructResponse({ count, records }, 'data fetched');
       ResponseHelper.sendResponse(response, res);

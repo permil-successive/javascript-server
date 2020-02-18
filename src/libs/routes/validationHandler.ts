@@ -216,7 +216,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       console.debug(`tovalidate = ${toValidate}`);
 
       // checking for not required and not supplied variable
-      if (!validationConfig.required && toValidate === undefined) {
+      if (!validationConfig.required && toValidate === undefined && (validationConfig.default === undefined) ) {
         console.debug('inside return require');
         return;
       }

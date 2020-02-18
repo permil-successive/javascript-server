@@ -4,6 +4,7 @@ import { VersionableRepository } from '../versionable';
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { configuration } from '../../config';
+import { IList } from '../entities';
 
 export default class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IUserModel>> {
 
@@ -50,11 +51,15 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
     return deletedData;
   }
 
-  async list(skip: number, limit: number, sort: string): Promise<IUserModel[]> {
+  async list(options: IList): Promise<IUserModel[]> {
 
     console.info('====== inside list Repo =======');
 
-    return await super.list(skip, limit, '-password', sort);
+    const { projection = '' } = options;
+
+    options.projection = projection + '-password';
+
+    return await super.list(options);
   }
 
 }

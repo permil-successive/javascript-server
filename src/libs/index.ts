@@ -8,7 +8,8 @@ export {
   errorHandler,
   ResponseHelper,
   IError,
-  validateEmail
+  validateEmail,
+  parseStringQuery
 } from './routes';
 
 

@@ -1,4 +1,5 @@
 import { IError } from '../../libs';
+import { validateEmail } from '../../libs';
 
 export default {
   create: {
@@ -23,7 +24,12 @@ export default {
       required: true,
       string: true,
       in: [ 'body' ],
-      errorMessage: 'email is required'
+      errorMessage: 'email is required',
+      custom: (value) => {
+        if (!validateEmail(value)) {
+          throw new Error('email is invalid');
+        }
+      }
     },
     mobileNumber: {
       required: true,
@@ -105,42 +111,91 @@ export default {
       required: true,
       isObject: true,
       custom: (dataToUpdate: any): boolean => {
-        const errorMessage: IError = {
-          message: '',
-          code: '400'
-        };
 
-        if (typeof dataToUpdate.name !== 'string' || dataToUpdate.name.trim() === '') {
+        const ERROR_CODE = '400';
 
-          errorMessage.message = 'name is required of string in dataToUpdate';
-          throw errorMessage;
+        const errorMessages: IError[] = [];
 
-        } else if (typeof dataToUpdate.address !== 'string' || dataToUpdate.address.trim() === '') {
+        const { name, address, email, mobileNumber, dob, hobbies } = dataToUpdate;
 
-          errorMessage.message = 'address is required of string in dataToUpdate';
-          throw errorMessage;
+        if (typeof name !== 'string' || name.trim() === '') {
+
+          errorMessages.push({
+            message: 'name is required of string in dataToUpdate',
+            code: ERROR_CODE
+          });
+
         }
 
-        if (typeof dataToUpdate.email !== 'string' || dataToUpdate.email.trim() === '') {
+        if (typeof address !== 'string' || address.trim() === '') {
 
-          errorMessage.message = 'email is required of string in dataToUpdate';
-          throw errorMessage;
+          errorMessages.push({
+            message: 'address is required of string in dataToUpdate',
+            code: ERROR_CODE
+          });
 
-        } else if (typeof dataToUpdate.mobileNumber !== 'number') {
-
-          errorMessage.message = 'mobileNumber is required of number in dataToUpdate';
-          throw errorMessage;
         }
 
-        if (typeof dataToUpdate.dob !== 'string' || dataToUpdate.dob.trim() === '') {
+        if (typeof email !== 'string' || email.trim() === '') {
 
-          errorMessage.message = 'dob is required of string and valid date (MM/DD/YYYY) in dataToUpdate';
-          throw errorMessage;
+          errorMessages.push({
+            message: 'email is required of string in dataToUpdate',
+            code: ERROR_CODE
+          });
 
-        } else if (typeof dataToUpdate.hobbies !== 'object' || (!Array.isArray(dataToUpdate.hobbies))) {
 
-          errorMessage.message = 'hobbies is required of string in dataToUpdate';
-          throw errorMessage;
+        } else if ( !validateEmail(email)) {
+
+          errorMessages.push({
+            message: 'email is invalid in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        }
+
+        if (typeof mobileNumber !== 'number') {
+
+          errorMessages.push({
+            message: 'mobileNumber is required of number in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        } else if ( !( mobileNumber >= 1e9 && mobileNumber < 1e10  ) ) {
+
+          errorMessages.push({
+            message: 'mobileNumber is not valid in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        }
+
+        if (isNaN(Date.parse(dob))) {
+
+          errorMessages.push({
+            message: 'dob (MM/DD/YYYY) is required of string in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        }
+
+        if ( !hobbies ) {
+
+          errorMessages.push({
+            message: 'hobbies is required in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        } else if ( (!Array.isArray(hobbies)) ) {
+
+          errorMessages.push({
+            message: 'hobbies is must be array in dataToUpdate',
+            code: ERROR_CODE
+          });
+
+        }
+
+        if (errorMessages.length > 0) {
+          throw errorMessages;
         }
 
         return true;

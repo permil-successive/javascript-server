@@ -174,7 +174,7 @@ function isCustom(validationConfig, toValidate): boolean {
 
 export default (config) => (req: Request, res: Response, next: NextFunction) => {
   console.info('====== inside validation handler =======');
-  console.debug(`req.body = ${req.body}`);
+  console.debug('req.body = ', req.body);
   console.debug('config = ', config);
 
   const errorMessages = [];
@@ -185,6 +185,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
   };
 
   Object.keys(config).forEach((key) => {
+    console.debug(`-----------------------`);
     console.debug(`key = ${key}`);
 
     const validationConfig = config[key];
@@ -208,8 +209,7 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
 
     validationConfig.in.forEach((element) => {
 
-      console.debug(`element = ${element}`);
-      console.debug(req[element]);
+      console.debug(`in = ${element}`);
 
       let toValidate = req[element][key];
 
@@ -245,7 +245,13 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
         }
 
         console.debug(`Key = ${key}, error message = `, errorMessage);
-        errorMessages.push(errorMessage);
+
+        if (Array.isArray(errorMessage)) {
+          errorMessages.push(...errorMessage);
+        } else {
+          errorMessages.push(errorMessage);
+        }
+
       }
     });
   });

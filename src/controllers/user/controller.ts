@@ -27,6 +27,11 @@ class Controller {
 
     try {
       const { user: currentUser } = res.locals;
+      const { email } = req.body;
+      const isExist = await this.userRepository.findOne({email});
+      if (isExist)
+        throw { message: 'Record already exists', code: 422 };
+
       const data = await this.userRepository.create(req.body, currentUser.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data inserted');

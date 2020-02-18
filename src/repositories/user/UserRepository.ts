@@ -6,7 +6,6 @@ import * as bcrypt from 'bcrypt';
 import { configuration } from '../../config';
 
 export default class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IUserModel>> {
-  // private _ERROR_CODE = 400;
 
   constructor() {
     super(userModel);

@@ -4,7 +4,6 @@ import IError from './IError';
 import config from '../../config/configuration';
 import { hasPermission } from './utils';
 import { UserRepository, IUserModel } from '../../repositories';
-import IRequest from './IRequest';
 
 const ERROR_CODE = '401';
 
@@ -16,7 +15,7 @@ const ERROR_CODE = '401';
  *
  *  @returns express request handler
  */
-export default (currentModule: string, permissionType: string) => async (req: IRequest, res: Response, next: NextFunction) => {
+export default (currentModule: string, permissionType: string) => async (req: Request, res: Response, next: NextFunction) => {
   console.info('==============inside auth middleware===================');
 
   try {
@@ -49,7 +48,7 @@ export default (currentModule: string, permissionType: string) => async (req: IR
       return next(error);
     }
 
-    req.user = user; // assigning user to request for further use
+    res.locals.user = user; // assigning user to request for further use
 
     if (!hasPermission(currentModule, user.role, permissionType)) {
       console.info(`unauthorised access to ${user.role} while ${permissionType} in ${currentModule}`);

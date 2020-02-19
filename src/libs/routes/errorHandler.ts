@@ -49,7 +49,7 @@ const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFuncti
   console.info('errors = ', errors);
 
   let errorCode = err.code || (err[0] && err[0].code) || 500;
-  errorCode = (200 > errorCode && errorCode < 600) ? errorCode : 500;
+  errorCode = ( errorCode > 200 && errorCode < 600) ? errorCode : 500;
 
   res.status(errorCode).send(errors); // sending error to client
 };

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper, IRequest } from '../../libs';
+import { ResponseHelper } from '../../libs';
 import { UserRepository } from '../../repositories';
 
 class Controller {
@@ -22,7 +22,13 @@ class Controller {
   create = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const data = await this.userRepository.create(req.body);
+      const { user: currentUser } = res.locals;
+      const { email } = req.body;
+      const isExist = await this.userRepository.findOne({email});
+      if (isExist)
+        throw { message: 'Record already exists', code: 422 };
+
+      const data = await this.userRepository.create(req.body, currentUser.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data inserted');
       ResponseHelper.sendResponse(response, res);
@@ -31,10 +37,11 @@ class Controller {
     }
   }
 
-  fetchMe = async (req: IRequest, res: Response, next: NextFunction) => {
+  fetchMe = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const response = ResponseHelper.constructResponse(req.user, 'data fetched');
+      const { user } = res.locals;
+      const response = ResponseHelper.constructResponse(user, 'data fetched');
       ResponseHelper.sendResponse(response, res);
     } catch (err) {
       next(err);
@@ -44,7 +51,8 @@ class Controller {
   list = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const data = await this.userRepository.list(req.query.skip, req.query.limit);
+      const { skip, limit } = req.query;
+      const data = await this.userRepository.list(skip, limit);
 
       const response = ResponseHelper.constructResponse(data, 'data fetched');
       ResponseHelper.sendResponse(response, res);
@@ -55,7 +63,9 @@ class Controller {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.userRepository.update(req.body.id, req.body);
+      const { id, dataToUpdate } = req.body;
+      const { user: currentUser } = res.locals;
+      const data = await this.userRepository.update(id, dataToUpdate, currentUser.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data updated');
       ResponseHelper.sendResponse(response, res);
@@ -66,7 +76,9 @@ class Controller {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.userRepository.delete(req.params.id);
+      const { id } = req.params;
+      const { user: currentUser } = res.locals;
+      const data = await this.userRepository.delete(id, currentUser.originalId);
 
       const response = ResponseHelper.constructResponse(data, 'data deleted');
       ResponseHelper.sendResponse(response, res);

@@ -1,66 +1,39 @@
 import IUserModel from './IUserModel';
-import * as mongoose from 'mongoose';
 import userModel from './UserModel';
+import { VersionableRepository } from '../versionable';
+import * as mongoose from 'mongoose';
 
-export default class UserRepository {
-
-  private _userModel: mongoose.Model<IUserModel>;
-  private _ERROR_CODE = 400;
+export default class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IUserModel>> {
 
   constructor() {
-    this._userModel = userModel;
+    super(userModel);
   }
 
-  private generateId(): string {
-    return mongoose.Types.ObjectId().toHexString();
-  }
-
-  counts() {
-    return this._userModel.countDocuments({});
-  }
-
-  async create(data) {
-    const userData = {
-      _id: this.generateId(),
-      ...data
-    };
-    console.log(userData);
-    const createdData = await this._userModel.create(userData);
-    if (!createdData)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
+  async create(data, currentUser: string): Promise<IUserModel> {
+    const createdData: IUserModel = await super.create(data, currentUser);
+    createdData.set('password', undefined);
     return createdData;
   }
 
-  findOne(query) {
-    return this._userModel.findOne(query);
+  async findOne(query, password: boolean = false): Promise<IUserModel> {
+    const projection: string = password ? '' : '-password';
+    return await super.internalFindOne(query, projection);
   }
 
-  async update(id, data) {
-    const updatedData = await this._userModel.findOneAndUpdate({_id: id}, data.dataToUpdate);
-    if (!updatedData)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
+  async update(id, data, currentUser: string): Promise<IUserModel> {
+    const updatedData: IUserModel = await super.update(id, data, currentUser);
+    updatedData.set('password', undefined);
     return updatedData;
   }
 
-  async delete(id) {
-    const userData = {_id: id};
-    const data = await this._userModel.findOneAndDelete(userData);
-    if (!data)
-      throw {
-        message: 'operation not performed',
-        code: this._ERROR_CODE
-      };
-    return data;
+  async delete(id: string, currentUser: string): Promise<IUserModel> {
+    const deletedData = await super.delete(id, currentUser);
+    deletedData.set('password', undefined);
+    return deletedData;
   }
 
-  list(skip: number, limit: number) {
-    return this._userModel.find().skip(skip).limit(limit);
+  async list(skip: number, limit: number): Promise<IUserModel[]> {
+    return await super.list(skip, limit, '-password');
   }
 
 }

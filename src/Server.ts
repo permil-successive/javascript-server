@@ -6,6 +6,7 @@ import { IConfig } from './config';
 import { errorHandler, notFoundRoute } from './libs';
 import mainRouter from './router';
 import { Database } from './libs';
+import * as mypackage from '../package.json';
 
 export default class Server {
 
@@ -31,28 +32,61 @@ export default class Server {
     this.app.use(bodyParser.json());
   }
 
-  initSwagger() {
+  initSwaggerSpec() {
+
+    console.info('====== inside initSwaggerSpec =======');
+
+    const { name: title, version, description  } = mypackage;
 
     const swaggerDefinition = {
       info: {
         // API informations (required)
-        title: 'Hello World', // Title (required)
-        version: '1.0.0', // Version (required)
-        description: 'A sample API', // Description (optional)
+        title, // Title (required)
+        version, // Version (required)
+        description, // Description (optional)
       },
+      servers: {
+        url: 'http://localhost:9000/api',
+        description: 'Internal Develop Server'
+      },
+      securityDefinitions: {
+        Bearer: {
+          in: 'headers',
+          name: 'Authorization',
+          type: 'apiKey'
+        }
+      },
+      swagger: '2.0',
       // host, // Host (optional)
-      basePath: '/',
+      basePath: '/api',
     };
 
     const swaggerOptions = {
       swaggerDefinition, // swagger definition
-      apis: ['dist/controllers/**/**.js'],
+      apis: ['dist/src/controllers/**/**.js'],
     };
 
     const swaggerSpec = swaggerJSDoc(swaggerOptions);
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(swaggerSpec);
+    console.log('swaggerSpec = ', swaggerSpec);
     return swaggerSpec;
+  }
+
+  iniSwagger() {
+
+    const JSON_PATH = '/api-docs.json';
+
+    this.app.use(JSON_PATH, (req: express.Request, res: express.Response): void => {
+
+      res.send(this.initSwaggerSpec());
+    });
+
+    const swaggerOptions = {
+      swaggerOptions: {
+        url: JSON_PATH
+      }
+    };
+
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup( undefined, swaggerOptions));
   }
 
   setupRoutes(): void {
@@ -63,7 +97,8 @@ export default class Server {
     });
 
     this.app.use('/api', mainRouter);
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(this.initSwagger()));
+
+    this.iniSwagger();
   }
 
   run(): Server {

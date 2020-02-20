@@ -134,7 +134,7 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
 
     console.info('====== inside list VersionableRepo =======');
     // skip: number, limit: number, projection: string = '', sort: string = ''
-    const { skip = 0, limit = 10, projection = '', sort = '', search = '' } = options;
+    const { skip = 0, limit = 10, projection = '', sort = '', search } = options;
 
     const query = { ...search, ...this.DELETE_QUERY };
     return await this.MODEL.find(query, projection).skip(skip).limit(limit).sort(sort + ' -updatedAt');

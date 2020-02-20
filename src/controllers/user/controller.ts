@@ -62,7 +62,7 @@ class Controller {
     console.info('====== inside list controller =======');
 
     try {
-      const { skip, limit, sort, search: searchQuery } = req.query;
+      const { skip, limit, sort, search: searchQuery = '' } = req.query;
       const search: ISearch = parseStringQuery(searchQuery);
       const count = await this.userRepository.counts();
       const records = await this.userRepository.list({skip, limit, sort, search });
@@ -120,14 +120,14 @@ class Controller {
 
       if (!user) {
         console.info('user doesnot exists');
-        throw new Error('Incorrect username/password');
+        throw { message: 'Incorrect username/password', code: '401' };
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
         console.info('password mismatch');
-        throw new Error('Incorrect username/password');
+        throw { message: 'Incorrect username/password', code: '401' };
       }
 
       const { originalId: id, role, name } = user;

@@ -1,6 +1,7 @@
 import { Iuser, Ipermissions } from './routes/utils';
 
 export enum PermissionType { read = 'read', write = 'write', delete = 'delete' }
+export enum Roles { 'head-trainer', trainee, trainer }
 
 // permissions
 export const permissions: Ipermissions = {
@@ -11,8 +12,8 @@ export const permissions: Ipermissions = {
     delete: []
   },
   'trainee' : {
-    all: [],
-    read: ['trainee', 'trainer'],
+    all: ['head-trainer'],
+    read: ['head-trainer', 'trainer'],
     write: ['trainer'],
     delete: []
   }

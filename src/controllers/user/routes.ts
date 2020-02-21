@@ -4,8 +4,8 @@ import validationConfig from './validations';
 import { validationHandler, authorizationHandler, PermissionType } from '../../libs';
 
 const userRoutes: Router  = Router();
-const { list, create, update, delete: deleteFunction, fetchMe, login } = Controller;
-const { get: getConfig, create: createConfig, update: updateConfig, delete: deleteConfig, login: loginConfig } = validationConfig;
+const { fetchMe, login } = Controller;
+const { get: getConfig, login: loginConfig } = validationConfig;
 const moduleName = 'users';
 
 /**
@@ -42,11 +42,10 @@ const moduleName = 'users';
  *         example: 0
  *   User:
  *     type: object
+ *     allOf:
+ *       - $ref: '#/definitions/UserPost'
+ *       - type: object
  *     properties:
- *       name:
- *         type: string
- *         description: name of user
- *         example: vinay
  *       role:
  *         type: string
  *         enum:
@@ -55,26 +54,8 @@ const moduleName = 'users';
  *           - trainee
  *         description: role of user
  *         example: head-trainer
- *       address:
- *         type: string
- *         description: address of user
- *         example: Noida
  *       dob:
- *         type: string
- *         description: date of birth of user
  *         example: 1994-12-31T18:30:00.000Z
- *       email:
- *         type: string
- *         description: email of user
- *         example: vinay@successive.tech
- *       mobileNumber:
- *         type: number
- *         description: mobile number of user
- *         example: 9999999999
- *       hobbies:
- *         type: array
- *         description: list of hobbies
- *         example: ['travelling']
  *
  *   UserLogin:
  *     type: object
@@ -146,12 +127,12 @@ const moduleName = 'users';
  *         example: 401 - Incorrect username/password
  */
 
-userRoutes.route('/')
-.get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
-.post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
-.put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update);
+// userRoutes.route('/')
+// .get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
+// .post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
+// .put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update);
 
-userRoutes.delete('/:id', authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
+// userRoutes.delete('/:id', authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
 
 /**
  * @swagger
@@ -160,7 +141,7 @@ userRoutes.delete('/:id', authorizationHandler(moduleName, PermissionType.delete
  *   get:
  *     tags:
  *       - User
- *     description: Details of the current logined user
+ *     description: Details of the logged-in user
  *     security:
  *       - Bearer: []
  *     produces:
@@ -205,7 +186,7 @@ userRoutes.get('/me', authorizationHandler(moduleName, PermissionType.read), val
  *
  *     responses:
  *       200:
- *         description: login
+ *         description: login success
  *         schema:
  *           $ref: '#/definitions/LoginSuccess'
  *       400:

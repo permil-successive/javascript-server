@@ -26,7 +26,7 @@ class Controller {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside create controller =======');
+    console.info('====== inside create user controller =======');
 
     try {
       const { user: currentUser } = res.locals;
@@ -46,7 +46,7 @@ class Controller {
 
   fetchMe = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside fetch controller =======');
+    console.info('====== inside fetch user controller =======');
 
     try {
       const { user } = res.locals;
@@ -59,11 +59,15 @@ class Controller {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside list controller =======');
+    console.info('====== inside list user controller =======');
 
     try {
       const { skip, limit, sort, search: searchQuery = '' } = req.query;
-      const search: ISearch = parseStringQuery(searchQuery);
+      const search: ISearch = parseStringQuery(searchQuery, (value) => {
+        const regExpToSearch = new RegExp(value, 'i');
+        console.info('regExpToSearch = ', regExpToSearch);
+        return regExpToSearch;
+      });
       const count = await this.userRepository.counts();
       const records = await this.userRepository.list({skip, limit, sort, search });
 
@@ -76,7 +80,7 @@ class Controller {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside update controller =======');
+    console.info('====== inside update user controller =======');
 
     try {
       const { id, dataToUpdate } = req.body;
@@ -92,7 +96,7 @@ class Controller {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside delete controller =======');
+    console.info('====== inside delete user controller =======');
 
     try {
       const { id } = req.params;
@@ -108,7 +112,7 @@ class Controller {
 
   login = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside login controller =======');
+    console.info('====== inside login user controller =======');
 
     try {
       const { email, password } = req.body;

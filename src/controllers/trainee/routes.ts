@@ -33,6 +33,41 @@ const { get: getConfig, create: createConfig, update: updateConfig, delete: dele
  *                 - $ref: '#/definitions/Document'
  *                 - type: object
  *
+ *   UserPost:
+ *     type: object
+ *     allOf:
+ *       - $ref: '#/definitions/UserPut'
+ *       - type: object
+ *     properties:
+ *       email:
+ *         type: string
+ *         description: email of user
+ *         example: vinay@successive.tech
+ *
+ *   UserPut:
+ *     type: object
+ *     properties:
+ *       name:
+ *         type: string
+ *         description: name of user
+ *         example: vinay
+ *       address:
+ *         type: string
+ *         description: address of user
+ *         example: Noida
+ *       dob:
+ *         type: string
+ *         description: date of birth of user
+ *         example: 08-11-1995
+ *       mobileNumber:
+ *         type: number
+ *         description: mobile number of user
+ *         example: 9999999999
+ *       hobbies:
+ *         type: array
+ *         description: list of hobbies
+ *         example: ['travelling']
+ *
  *   TraineSuccess:
  *     allOf:
  *       - $ref: '#/definitions/Response'
@@ -76,6 +111,8 @@ traineeRoutes.route('/')
  *         default: 10
  *       - name: search
  *         type: string
+ *         //format: string
+ *         //allowEmptyValue: true
  *         description: to search from the records
  *         in: query
  *       - name: sort
@@ -84,7 +121,7 @@ traineeRoutes.route('/')
  *         in: query
  *     responses:
  *       200:
- *         description: login
+ *         description: list of the trainnes
  *         schema:
  *           $ref: '#/definitions/TraineListSuccess'
  *       401:
@@ -120,11 +157,16 @@ traineeRoutes.route('/')
  *         in: body
  *         required: true
  *         type: object
- *         schema:
- *           $ref: '#/definitions/User'
+ *         allOf:
+ *           - $ref: '#/definitions/UserPost'
+ *         properties:
+ *           password:
+ *             type: string
+ *             example: Training@123
+ *             description: password of the user
  *     responses:
  *       200:
- *         description: login
+ *         description: create trainee success
  *         schema:
  *           $ref: '#/definitions/TraineSuccess'
  *       400:
@@ -168,10 +210,10 @@ traineeRoutes.route('/')
  *           dataToUpdate:
  *             type: object
  *             allOf:
- *               - $ref: '#/definitions/User'
+ *               - $ref: '#/definitions/UserPut'
  *     responses:
  *       200:
- *         description: login
+ *         description: update success
  *         schema:
  *           $ref: '#/definitions/TraineSuccess'
  *       400:
@@ -206,10 +248,11 @@ traineeRoutes.route('/')
  *     parameters:
  *       - name: id
  *         type: string
+ *         description: unique id of record to delete
  *         in: path
  *     responses:
  *       200:
- *         description: login
+ *         description: delete success
  *         schema:
  *           $ref: '#/definitions/TraineSuccess'
  *       401:

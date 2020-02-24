@@ -69,6 +69,12 @@ export default {
           throw errorMessage;
         }
       }
+    },
+    password: {
+      required: true,
+      in: [ 'body' ],
+      string: true,
+      errorMessage: 'password is required',
     }
   },
   delete: {
@@ -194,6 +200,18 @@ export default {
 
         return true;
       },
+    }
+  },
+  login: {
+    email: {
+      required: true,
+      string: true,
+      in: ['body']
+    },
+    password: {
+      required: true,
+      string: true,
+      in: ['body']
     }
   }
 };

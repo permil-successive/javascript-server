@@ -2,6 +2,8 @@ import IUserModel from './IUserModel';
 import userModel from './UserModel';
 import { VersionableRepository } from '../versionable';
 import * as mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import { configuration } from '../../config';
 
 export default class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IUserModel>> {
 
@@ -10,6 +12,11 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
   }
 
   async create(data, currentUser: string): Promise<IUserModel> {
+
+    const { saltRounds } = configuration;
+    const plainPassword = data.password;
+
+    data.password = await bcrypt.hash(plainPassword, saltRounds);
     const createdData: IUserModel = await super.create(data, currentUser);
     createdData.set('password', undefined);
     return createdData;

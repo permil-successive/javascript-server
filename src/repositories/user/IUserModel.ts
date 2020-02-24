@@ -11,4 +11,5 @@ export default interface IUserModel extends IVersionableDocument {
   mobileNumber: number;
   dob: Date;
   hobbies: [string];
+  password: string;
 }

@@ -11,7 +11,7 @@ const { get: getConfig, create: createConfig, update: updateConfig, delete: dele
 traineeRoutes.route('/')
 .get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
 .post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
-.put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update)
+.put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update);
 
 traineeRoutes.delete('/:id', authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
 

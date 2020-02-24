@@ -157,13 +157,14 @@ traineeRoutes.route('/')
  *         in: body
  *         required: true
  *         type: object
- *         allOf:
- *           - $ref: '#/definitions/UserPost'
- *         properties:
- *           password:
- *             type: string
- *             example: Training@123
- *             description: password of the user
+ *         schema:
+ *           allOf:
+ *             - $ref: '#/definitions/UserPost'
+ *           properties:
+ *             password:
+ *               type: string
+ *               example: Training@123
+ *               description: password of the user
  *     responses:
  *       200:
  *         description: create trainee success
@@ -204,13 +205,16 @@ traineeRoutes.route('/')
  *         in: body
  *         required: true
  *         type: object
- *         properties:
- *           id:
- *             type: string
- *           dataToUpdate:
- *             type: object
- *             allOf:
- *               - $ref: '#/definitions/UserPut'
+ *         schema:
+ *           properties:
+ *             id:
+ *               type: string
+ *               description: unique id of record to update
+ *               example: 5e4683724afcda2b097391a9
+ *             dataToUpdate:
+ *               type: object
+ *               allOf:
+ *                 - $ref: '#/definitions/UserPut'
  *     responses:
  *       200:
  *         description: update success

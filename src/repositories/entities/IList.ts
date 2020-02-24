@@ -4,6 +4,7 @@ export default interface IList {
   projection?: string;
   sort?: string;
   search?: ISearch;
+  exclude?: object;
 }
 
 export interface ISearch {

@@ -16,10 +16,10 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
 
     console.info('====== inside create Repo =======');
 
-    const { SALT_ROUNDS } = configuration;
+    const { saltRounds } = configuration;
     const plainPassword = data.password;
 
-    data.password = await bcrypt.hash(plainPassword, SALT_ROUNDS);
+    data.password = await bcrypt.hash(plainPassword, saltRounds);
     const createdData: IUserModel = await super.create(data, currentUser);
     createdData.set('password', undefined);
     return createdData;
@@ -33,11 +33,11 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
     return await super.internalFindOne(query, projection);
   }
 
-  async update(id, data, currentUser: string): Promise<IUserModel> {
+  async update(id, data, currentUser: string, notPermittedUsers: string[]): Promise<IUserModel> {
 
     console.info('====== inside update Repo =======');
 
-    const updatedData: IUserModel = await super.update(id, data, currentUser);
+    const updatedData: IUserModel = await super.update(id, data, currentUser, notPermittedUsers);
     updatedData.set('password', undefined);
     return updatedData;
   }

@@ -46,16 +46,22 @@ class Controller {
 
     console.info('====== inside list trainee controller =======');
 
+    const { role = '100' } = res.locals.user;
+
     try {
       const { skip, limit, sort, search: searchQuery = '' } = req.query;
-      console.log(Roles);
+      const exludeUsers = [...Array(Roles[role]).keys()].map((i) => Roles[i]);
+      console.log('excludeUsers =', exludeUsers);
       const search: ISearch = parseStringQuery(searchQuery, (value) => {
+
         const regExpToSearch = new RegExp(value, 'i');
         console.info('regExpToSearch = ', regExpToSearch);
         return regExpToSearch;
+
       });
+      const exclude = { role : { '$nin': exludeUsers }};
       const count = await this.userRepository.counts();
-      const records = await this.userRepository.list({skip, limit, sort, search });
+      const records = await this.userRepository.list({skip, limit, sort, search, exclude });
 
       const response = ResponseHelper.constructResponse({ count, records }, 'data fetched');
       ResponseHelper.sendResponse(response, res);
@@ -71,7 +77,11 @@ class Controller {
     try {
       const { id, dataToUpdate } = req.body;
       const { user: currentUser } = res.locals;
-      const data = await this.userRepository.update(id, dataToUpdate, currentUser.originalId);
+
+      const notPermittedUsers = [...Array(Roles[currentUser.role]).keys()].map((i) => Roles[i]);
+      console.log('notPermittedUsers =', notPermittedUsers);
+
+      const data = await this.userRepository.update(id, dataToUpdate, currentUser.originalId, notPermittedUsers);
 
       const response = ResponseHelper.constructResponse(data, 'data updated');
       ResponseHelper.sendResponse(response, res);

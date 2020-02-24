@@ -13,12 +13,10 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
 
   async create(data, currentUser: string): Promise<IUserModel> {
 
-    console.info('====== inside create Repo =======');
-
-    const { SALT_ROUNDS } = configuration;
+    const { saltRounds } = configuration;
     const plainPassword = data.password;
 
-    data.password = await bcrypt.hash(plainPassword, SALT_ROUNDS);
+    data.password = await bcrypt.hash(plainPassword, saltRounds);
     const createdData: IUserModel = await super.create(data, currentUser);
     createdData.set('password', undefined);
     return createdData;

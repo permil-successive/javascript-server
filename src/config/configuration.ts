@@ -9,7 +9,7 @@ const configuration: IConfig = Object.freeze({
   secretKey: process.env.SECRET_KEY,
   mongoUri: process.env.MONGO_URL,
   password: process.env.PASSWORD,
-  SALT_ROUNDS: 10
+  saltRounds: 10
 });
 
 export default configuration;

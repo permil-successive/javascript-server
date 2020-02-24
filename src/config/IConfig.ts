@@ -4,5 +4,5 @@ export default interface IConfig {
   secretKey: string;
   mongoUri: string;
   password: string;
-  SALT_ROUNDS: number;
+  saltRounds: number;
 }

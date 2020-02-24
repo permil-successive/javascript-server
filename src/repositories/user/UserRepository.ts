@@ -14,8 +14,6 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
 
   async create(data, currentUser: string): Promise<IUserModel> {
 
-    console.info('====== inside create Repo =======');
-
     const { saltRounds } = configuration;
     const plainPassword = data.password;
 

@@ -51,11 +51,17 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
   }
 
   public async counts(): Promise<number> {
+
+    console.info('====== inside counts VersionableRepo =======');
+
     const query = this.DELETE_QUERY;
     return await this.MODEL.countDocuments(query);
   }
 
   protected async create(data, currentUser: string): Promise<D> {
+
+    console.info('====== inside create VersionableRepo =======');
+
     const newId = this.generateId();
     const startedAt = new Date();
     const userData = {
@@ -72,6 +78,9 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
   }
 
   protected async internalFindOne(query, projection: string): Promise<D> {
+
+    console.info('====== inside findOne VersionableRepo =======');
+
     let orgIdObj = {};
     if (query.id || query._id)
       orgIdObj = { originalId: query.id || query._id };
@@ -85,6 +94,9 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
   }
 
   protected async update(id, data, currentUser: string): Promise<D> {
+
+    console.info('====== inside update VersionableRepo =======');
+
     const query = { originalId: id, ...this.DELETE_QUERY };
     const originalData = await this.MODEL.findOne(query);
     if (!originalData) {
@@ -109,14 +121,20 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
   }
 
   protected async delete(id: string, currentUser: string): Promise<D> {
+
+    console.info('====== inside delete VersionableRepo =======');
+
     const query = { originalId: id, ...this.DELETE_QUERY };
     const data = await this.MODEL.findOneAndUpdate(query, this.getDeletedInfo(currentUser));
     this.isOperationSuccess(data);
     return data;
   }
 
-  protected async list(skip: number, limit: number, projection: string = ''): Promise<D[]> {
+  protected async list(skip: number, limit: number, projection: string = '', sort: string = ''): Promise<D[]> {
+
+    console.info('====== inside list VersionableRepo =======');
+
     const query = { ...this.DELETE_QUERY };
-    return await this.MODEL.find(query, projection).skip(skip).limit(limit);
+    return await this.MODEL.find(query, projection).skip(skip).limit(limit).sort(sort + ' -updatedAt');
   }
 }

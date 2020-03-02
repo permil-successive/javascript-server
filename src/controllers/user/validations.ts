@@ -98,6 +98,11 @@ export default {
       number: true,
       in: ['query'],
       errorMessage: 'limit is invalid',
+    },
+    sort: {
+      required: false,
+      string: true,
+      in: [ 'query' ]
     }
   },
   update: {

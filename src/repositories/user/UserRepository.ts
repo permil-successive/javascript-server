@@ -23,24 +23,36 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
   }
 
   async findOne(query, password: boolean = false): Promise<IUserModel> {
+
+    console.info('====== inside findOne Repo =======');
+
     const projection: string = password ? '' : '-password';
     return await super.internalFindOne(query, projection);
   }
 
   async update(id, data, currentUser: string): Promise<IUserModel> {
+
+    console.info('====== inside update Repo =======');
+
     const updatedData: IUserModel = await super.update(id, data, currentUser);
     updatedData.set('password', undefined);
     return updatedData;
   }
 
   async delete(id: string, currentUser: string): Promise<IUserModel> {
+
+    console.info('====== inside delete Repo =======');
+
     const deletedData = await super.delete(id, currentUser);
     deletedData.set('password', undefined);
     return deletedData;
   }
 
-  async list(skip: number, limit: number): Promise<IUserModel[]> {
-    return await super.list(skip, limit, '-password');
+  async list(skip: number, limit: number, sort: string): Promise<IUserModel[]> {
+
+    console.info('====== inside list Repo =======');
+
+    return await super.list(skip, limit, '-password', sort);
   }
 
 }

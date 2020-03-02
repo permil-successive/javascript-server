@@ -1,5 +1,5 @@
 export { default as Database } from './Database';
-export { PermissionType } from './constants';
+export { Roles, PermissionType } from './constants';
 
 export {
   notFoundRoute,
@@ -8,7 +8,8 @@ export {
   errorHandler,
   ResponseHelper,
   IError,
-  validateEmail
+  validateEmail,
+  parseStringQuery
 } from './routes';
 
 

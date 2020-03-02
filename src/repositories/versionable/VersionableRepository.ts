@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import IVersionableDocument from './IVersionableDocument';
+import { IList } from '../entities';
 
 export default class VersionableRepository<D extends IVersionableDocument, M extends mongoose.Model<D>> {
   protected MODEL: M;
@@ -93,14 +94,18 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return await this.MODEL.findOne(myQuery, projection);
   }
 
-  protected async update(id, data, currentUser: string): Promise<D> {
+  protected async update(id, data, currentUser: string, notPermittedUsers: string[]): Promise<D> {
 
     console.info('====== inside update VersionableRepo =======');
 
     const query = { originalId: id, ...this.DELETE_QUERY };
-    const originalData = await this.MODEL.findOne(query);
+    const originalData: any = await this.MODEL.findOne(query);
     if (!originalData) {
       throw new Error('record for this ID doesn\'t exist');
+    }
+
+    if (notPermittedUsers.indexOf(originalData.role) >= 0 ) {
+      throw { message: 'not permitted to edit this record', code: '401'};
     }
 
     const dataToUpdate = {
@@ -130,11 +135,13 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return data;
   }
 
-  protected async list(skip: number, limit: number, projection: string = '', sort: string = ''): Promise<D[]> {
+  protected async list(options: IList): Promise<D[]> {
 
     console.info('====== inside list VersionableRepo =======');
+    // skip: number, limit: number, projection: string = '', sort: string = ''
+    const { skip = 0, limit = 10, projection = '', sort = '', search, exclude = {} } = options;
 
-    const query = { ...this.DELETE_QUERY };
+    const query = { ...search, ...exclude, ...this.DELETE_QUERY };
     return await this.MODEL.find(query, projection).skip(skip).limit(limit).sort(sort + ' -updatedAt');
   }
 }

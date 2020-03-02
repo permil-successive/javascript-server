@@ -4,6 +4,7 @@ import { VersionableRepository } from '../versionable';
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { configuration } from '../../config';
+import { IList } from '../entities';
 
 export default class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IUserModel>> {
 
@@ -30,11 +31,11 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
     return await super.internalFindOne(query, projection);
   }
 
-  async update(id, data, currentUser: string): Promise<IUserModel> {
+  async update(id, data, currentUser: string, notPermittedUsers: string[]): Promise<IUserModel> {
 
     console.info('====== inside update Repo =======');
 
-    const updatedData: IUserModel = await super.update(id, data, currentUser);
+    const updatedData: IUserModel = await super.update(id, data, currentUser, notPermittedUsers);
     updatedData.set('password', undefined);
     return updatedData;
   }
@@ -48,11 +49,15 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
     return deletedData;
   }
 
-  async list(skip: number, limit: number, sort: string): Promise<IUserModel[]> {
+  async list(options: IList): Promise<IUserModel[]> {
 
     console.info('====== inside list Repo =======');
 
-    return await super.list(skip, limit, '-password', sort);
+    const { projection = '' } = options;
+
+    options.projection = projection + '-password';
+
+    return await super.list(options);
   }
 
 }

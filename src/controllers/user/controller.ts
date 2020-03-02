@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper } from '../../libs';
+import { ResponseHelper, parseStringQuery } from '../../libs';
 import { UserRepository } from '../../repositories';
 import { configuration } from '../../config';
 
@@ -23,29 +23,9 @@ class Controller {
     return this.instance;
   }
 
-  create = async (req: Request, res: Response, next: NextFunction) => {
-
-    console.info('====== inside create controller =======');
-
-    try {
-      const { user: currentUser } = res.locals;
-      const { email } = req.body;
-      const isExist = await this.userRepository.findOne({email});
-      if (isExist)
-        throw { message: 'Record already exists', code: 422 };
-
-      const data = await this.userRepository.create(req.body, currentUser.originalId);
-
-      const response = ResponseHelper.constructResponse(data, 'data inserted');
-      ResponseHelper.sendResponse(response, res);
-    } catch (err) {
-      next(err);
-    }
-  }
-
   fetchMe = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside fetch controller =======');
+    console.info('====== inside fetch user controller =======');
 
     try {
       const { user } = res.locals;
@@ -56,57 +36,9 @@ class Controller {
     }
   }
 
-  list = async (req: Request, res: Response, next: NextFunction) => {
-
-    console.info('====== inside list controller =======');
-
-    try {
-      const { skip, limit, sort } = req.query;
-      const count = await this.userRepository.counts();
-      const records = await this.userRepository.list(skip, limit, sort);
-
-      const response = ResponseHelper.constructResponse({ count, records }, 'data fetched');
-      ResponseHelper.sendResponse(response, res);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  update = async (req: Request, res: Response, next: NextFunction) => {
-
-    console.info('====== inside update controller =======');
-
-    try {
-      const { id, dataToUpdate } = req.body;
-      const { user: currentUser } = res.locals;
-      const data = await this.userRepository.update(id, dataToUpdate, currentUser.originalId);
-
-      const response = ResponseHelper.constructResponse(data, 'data updated');
-      ResponseHelper.sendResponse(response, res);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  delete = async (req: Request, res: Response, next: NextFunction) => {
-
-    console.info('====== inside delete controller =======');
-
-    try {
-      const { id } = req.params;
-      const { user: currentUser } = res.locals;
-      const data = await this.userRepository.delete(id, currentUser.originalId);
-
-      const response = ResponseHelper.constructResponse(data, 'data deleted');
-      ResponseHelper.sendResponse(response, res);
-    } catch (err) {
-      next(err);
-    }
-  }
-
   login = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.info('====== inside login controller =======');
+    console.info('====== inside login user controller =======');
 
     try {
       const { email, password } = req.body;
@@ -118,14 +50,14 @@ class Controller {
 
       if (!user) {
         console.info('user doesnot exists');
-        throw new Error('Incorrect username/password');
+        throw { message: 'Incorrect username/password', code: '401' };
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
         console.info('password mismatch');
-        throw new Error('Incorrect username/password');
+        throw { message: 'Incorrect username/password', code: '401' };
       }
 
       const { originalId: id, role, name } = user;

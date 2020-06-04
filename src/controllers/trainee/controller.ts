@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { ResponseHelper, parseStringQuery, Roles } from '../../libs';
+import { ResponseHelper, Roles } from '../../libs';
 import { UserRepository } from '../../repositories';
-import { ISearch } from '../../repositories/entities';
+import { getSeachQryforGet, checkUpdatePermission } from './helper';
 
 class Controller {
 
@@ -30,6 +30,7 @@ class Controller {
       req.body.role = 'trainee';
 
       const isExist = await this.userRepository.findOne({email});
+
       if (isExist)
         throw { message: 'Record already exists', code: 422 };
 
@@ -49,19 +50,12 @@ class Controller {
     const { role = '100' } = res.locals.user;
 
     try {
-      const { skip, limit, sort, search: searchQuery = '' } = req.query;
-      const exludeUsers = [...Array(Roles[role]).keys()].map((i) => Roles[i]);
-      console.log('excludeUsers =', exludeUsers);
-      const search: ISearch = parseStringQuery(searchQuery, (value) => {
+      const { skip, limit, sort, search: searchQuery = '' }: any = req.query;
 
-        const regExpToSearch = new RegExp(value, 'i');
-        console.info('regExpToSearch = ', regExpToSearch);
-        return regExpToSearch;
+      const query: any = getSeachQryforGet(searchQuery, role);
 
-      });
-      const exclude = { role : { '$nin': exludeUsers }};
-      const count = await this.userRepository.counts();
-      const records = await this.userRepository.list({skip, limit, sort, search, exclude });
+      const count = await this.userRepository.counts(query);
+      const records = await this.userRepository.list(query, '', {skip, limit, sort });
 
       const response = ResponseHelper.constructResponse({ count, records }, 'data fetched');
       ResponseHelper.sendResponse(response, res);
@@ -78,10 +72,11 @@ class Controller {
       const { id, dataToUpdate } = req.body;
       const { user: currentUser } = res.locals;
 
-      const notPermittedUsers = [...Array(Roles[currentUser.role]).keys()].map((i) => Roles[i]);
-      console.log('notPermittedUsers =', notPermittedUsers);
+      await checkUpdatePermission(currentUser);
 
-      const data = await this.userRepository.update(id, dataToUpdate, currentUser.originalId, notPermittedUsers);
+      const data = await this.userRepository.update(
+        {originalId: id}, dataToUpdate, currentUser.originalId,
+      );
 
       const response = ResponseHelper.constructResponse(data, 'data updated');
       ResponseHelper.sendResponse(response, res);
@@ -96,7 +91,10 @@ class Controller {
     try {
       const { id } = req.params;
       const { user: currentUser } = res.locals;
-      const data = await this.userRepository.delete(id, currentUser.originalId);
+
+      const data = await this.userRepository.delete(
+        {originalId: id}, currentUser.originalId
+      );
 
       const response = ResponseHelper.constructResponse(data, 'data deleted');
       ResponseHelper.sendResponse(response, res);

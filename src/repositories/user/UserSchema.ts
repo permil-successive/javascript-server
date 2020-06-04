@@ -10,10 +10,6 @@ export default class UserSchema extends VersionableSchema {
       address: String,
       email: String,
       password: String,
-      // {
-      //   type: String,
-      //   unique: true,
-      // },
       mobileNumber: Number,
       dob: Date,
       hobbies: [String]

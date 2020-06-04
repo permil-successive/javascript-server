@@ -23,41 +23,38 @@ export default class UserRepository extends VersionableRepository<IUserModel, mo
     return createdData;
   }
 
-  async findOne(query, password: boolean = false): Promise<IUserModel> {
+  async findOne(query): Promise<IUserModel> {
 
     console.info('====== inside findOne Repo =======');
 
-    const projection: string = password ? '' : '-password';
-    return await super.internalFindOne(query, projection);
+    // const projection: string = password ? '' : '-password';
+    return await super.findOne(query);
   }
 
-  async update(id, data, currentUser: string, notPermittedUsers: string[]): Promise<IUserModel> {
+  async update(query = {}, data, currentUser: string): Promise<IUserModel> {
 
     console.info('====== inside update Repo =======');
 
-    const updatedData: IUserModel = await super.update(id, data, currentUser, notPermittedUsers);
+    const updatedData: IUserModel = await super.update(query, data, currentUser);
     updatedData.set('password', undefined);
     return updatedData;
   }
 
-  async delete(id: string, currentUser: string): Promise<IUserModel> {
+  async delete(query = {}, currentUser: string): Promise<IUserModel> {
 
     console.info('====== inside delete Repo =======');
 
-    const deletedData = await super.delete(id, currentUser);
+    const deletedData = await super.delete(query, currentUser);
     deletedData.set('password', undefined);
     return deletedData;
   }
 
-  async list(options: IList): Promise<IUserModel[]> {
+  async list(query = {}, projection: string = '', options: IList): Promise<IUserModel[]> {
 
     console.info('====== inside list Repo =======');
 
-    const { projection = '' } = options;
-
-    options.projection = projection + '-password';
-
-    return await super.list(options);
+    projection = projection + '-password';
+    return await super.list(query, projection, options);
   }
 
 }

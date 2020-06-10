@@ -44,7 +44,7 @@ class Controller {
       const { email, password } = req.body;
       const { secretKey } = configuration;
 
-      const user = await this.userRepository.findOne({ email }, true);
+      const user = await this.userRepository.findOne({ email });
 
       console.log('email =', email);
 

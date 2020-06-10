@@ -72,10 +72,10 @@ class Controller {
       const { id, dataToUpdate } = req.body;
       const { user: currentUser } = res.locals;
 
-      await checkUpdatePermission(currentUser);
+      await checkUpdatePermission(this.userRepository, id, currentUser);
 
       const data = await this.userRepository.update(
-        {originalId: id}, dataToUpdate, currentUser.originalId,
+        id, dataToUpdate, currentUser.originalId,
       );
 
       const response = ResponseHelper.constructResponse(data, 'data updated');
@@ -85,7 +85,7 @@ class Controller {
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  delete = async (req: Request, res: Response, next: NextFunction) => {
     console.info('====== inside delete trainee controller =======');
 
     try {
@@ -93,7 +93,7 @@ class Controller {
       const { user: currentUser } = res.locals;
 
       const data = await this.userRepository.delete(
-        {originalId: id}, currentUser.originalId
+        id, currentUser.originalId
       );
 
       const response = ResponseHelper.constructResponse(data, 'data deleted');

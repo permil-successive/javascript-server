@@ -54,12 +54,12 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return await this.MODEL.findOne(ehancedQuery, projection);
   }
 
-  protected async update(query = {}, data, currentUser: string): Promise<D> {
+  protected async update(id: string, data, currentUser: string): Promise<D> {
 
     console.info('====== inside update VersionableRepo =======');
 
-    const enhancedQuery: mongoose.FilterQuery<any> = { ...query, ...this.DELETE_QUERY };
-    const originalData: any = await this.MODEL.findOne(enhancedQuery);
+    const query: mongoose.FilterQuery<any> = { originalId: id, ...this.DELETE_QUERY };
+    const originalData: any = await this.MODEL.findOne(query);
     if (!originalData) {
       throw new Error('record for this ID doesn\'t exist');
     }
@@ -84,11 +84,11 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     return updatedData;
   }
 
-  protected async delete(query = { }, currentUser: string): Promise<D> {
+  protected async delete(id: string, currentUser: string): Promise<D> {
 
     console.info('====== inside delete VersionableRepo =======');
 
-    const myQuery: mongoose.FilterQuery<any> = { ...query, ...this.DELETE_QUERY };
+    const query: mongoose.FilterQuery<any> = { originalId: id, ...this.DELETE_QUERY };
     const data = await this.MODEL.findOneAndUpdate(query, getDeletedInfo(currentUser) as any);
     isOperationSuccess(data);
     return data;

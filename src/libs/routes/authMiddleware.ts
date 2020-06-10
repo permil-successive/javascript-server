@@ -39,9 +39,9 @@ export default (currentModule: string, permissionType: string) => async (req: Re
     // repo
     const userRepository: UserRepository = new UserRepository();
     const user: IUserModel = await userRepository.findOne({
-      _id : decodedUser.id,
+      originalId : decodedUser.id,
       email: decodedUser.email
-    });
+    }, '-password');
 
     if (!user) {
       console.info('given user doesn\'t exist');

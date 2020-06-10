@@ -10,14 +10,14 @@ export const getSeachQryforGet = (searchQuery, role) => {
     return regExpToSearch;
   });
   const exclude = { role: { '$nin': exludeUsers } };
-  const query = { ...search, ...exclude };
+  return  { ...search, ...exclude };
 };
 
-export const checkUpdatePermission = async(currentUser) => {
+export const checkUpdatePermission = async(userRepo, id, currentUser) => {
   const notPermittedUsers = [...Array(Roles[currentUser.role]).keys()].map((i) => Roles[i]);
   console.log('notPermittedUsers =', notPermittedUsers);
 
-  const originalData = await this.userRepository.findOne({originalId: id});
+  const originalData = await userRepo.findOne({originalId: id});
 
   if (notPermittedUsers.indexOf(originalData.role) >= 0 ) {
     throw { message: 'not permitted to edit this record', code: '401'};

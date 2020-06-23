@@ -1,4 +1,3 @@
-import * as mongoose from 'mongoose';
 import { IVersionableDocument } from '../versionable';
 
 export default interface IUserModel extends IVersionableDocument {

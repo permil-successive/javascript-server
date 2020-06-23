@@ -1,12 +1,11 @@
 import *  as express from 'express';
 import * as bodyParser from 'body-parser';
-import * as swaggerJSDoc from 'swagger-jsdoc';
-import * as swaggerUi from 'swagger-ui-express';
+
 import { IConfig } from './config';
 import { errorHandler, notFoundRoute } from './libs';
 import mainRouter from './router';
 import { Database } from './libs';
-import * as mypackage from '../package.json';
+import { initSwagger } from './initSwagger';
 
 export default class Server {
 
@@ -32,87 +31,29 @@ export default class Server {
     this.app.use(bodyParser.json());
   }
 
-  initSwaggerSpec() {
-
-    console.info('====== inside initSwaggerSpec =======');
-
-    const { name: title, version, description  } = mypackage;
-
-    const swaggerDefinition = {
-      info: {
-        // API informations (required)
-        title, // Title (required)
-        version, // Version (required)
-        description, // Description (optional)
-      },
-      servers: {
-        url: 'http://localhost:9000/api',
-        description: 'Internal Develop Server'
-      },
-      securityDefinitions: {
-        Bearer: {
-          in: 'headers',
-          name: 'Authorization',
-          type: 'apiKey'
-        }
-      },
-      swagger: '2.0',
-      // host, // Host (optional)
-      basePath: '/api',
-    };
-
-    const swaggerOptions = {
-      swaggerDefinition, // swagger definition
-      apis: ['dist/src/controllers/**/**.js'],
-    };
-
-    const swaggerSpec = swaggerJSDoc(swaggerOptions);
-    console.log('swaggerSpec = ', swaggerSpec);
-    return swaggerSpec;
-  }
-
-  iniSwagger() {
-
-    const JSON_PATH = '/api-docs.json';
-
-    this.app.use(JSON_PATH, (req: express.Request, res: express.Response): void => {
-
-      res.send(this.initSwaggerSpec());
-    });
-
-    const swaggerOptions = {
-      swaggerOptions: {
-        url: JSON_PATH
-      }
-    };
-
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup( undefined, swaggerOptions));
-  }
-
   setupRoutes(): void {
-
     this.app.get('/health-check', (req: express.Request, res: express.Response): void => {
-
       res.send('I am OK');
     });
 
     this.app.use('/api', mainRouter);
-
-    this.iniSwagger();
+    initSwagger(this.app);
   }
 
-  run(): Server {
-    const database: Database = new Database(this.config.mongoUri);
-    database.open().then(() => {
+  async run(): Promise<Server> {
+    try {
+      const database: Database = new Database(this.config.mongoUri);
+      await database.open();
       this.app.listen(this.config.port, (err) => {
         if (err) {
           throw err;
         }
         console.log(`Server is running on ${this.config.port}`);
       });
-    }).catch((err) => {
+    } catch (err) {
       console.error(err);
-    });
+    }
+
     return this;
   }
 }

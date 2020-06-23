@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
+
 import IError from './IError';
 import config from '../../config/configuration';
 import { hasPermission } from './utils';
@@ -15,7 +16,9 @@ const ERROR_CODE = '401';
  *
  *  @returns express request handler
  */
-export default (currentModule: string, permissionType: string) => async (req: Request, res: Response, next: NextFunction) => {
+export default (currentModule: string, permissionType: string) => async (
+  req: Request, res: Response, next: NextFunction
+) => {
   console.info('==============inside auth middleware===================');
 
   try {
@@ -28,8 +31,6 @@ export default (currentModule: string, permissionType: string) => async (req: Re
       code: ERROR_CODE,
       message: 'Unathorised Access'
     };
-
-    console.debug('decoded user = ', decodedUser);
 
     if (!decodedUser.id) {
       console.info('invalid token or user not decoded');

@@ -11,7 +11,9 @@ const ERROR_CODE = '400';
 function validateValidationConfig (validationConfig): void {
 
   // assigning default config
-  validationConfig.required = validationConfig.required === undefined ? true : validationConfig.required;
+  validationConfig.required = (
+    validationConfig.required === undefined ? true : validationConfig.required
+  );
   validationConfig.in = validationConfig.in || [ 'body' ];
 
   // checking validation.in data
@@ -216,7 +218,11 @@ export default (config) => (req: Request, res: Response, next: NextFunction) => 
       console.debug(`tovalidate = ${toValidate}`);
 
       // checking for not required and not supplied variable
-      if (!validationConfig.required && toValidate === undefined && (validationConfig.default === undefined) ) {
+      if (
+        !validationConfig.required
+        && toValidate === undefined
+        && (validationConfig.default === undefined)
+      ) {
         console.debug('inside return require');
         return;
       }

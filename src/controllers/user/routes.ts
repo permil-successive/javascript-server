@@ -127,13 +127,6 @@ const moduleName = 'users';
  *         example: 401 - Incorrect username/password
  */
 
-// userRoutes.route('/')
-// .get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
-// .post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
-// .put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update);
-
-// userRoutes.delete('/:id', authorizationHandler(moduleName, PermissionType.delete), validationHandler(deleteConfig), deleteFunction);
-
 /**
  * @swagger
  *

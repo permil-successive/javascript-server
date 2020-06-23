@@ -1,5 +1,6 @@
-import INotFoundError from './IError';
 import { Request, Response, NextFunction } from 'express';
+
+import INotFoundError from './IError';
 
 /**
  * constructing error of not found route

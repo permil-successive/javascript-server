@@ -1,4 +1,3 @@
-import * as mongoose from 'mongoose';
 import { VersionableSchema } from '../versionable';
 
 export default class UserSchema extends VersionableSchema {

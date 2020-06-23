@@ -1,5 +1,6 @@
-import IResponse from './IResponse';
 import { Response } from 'express';
+
+import IResponse from './IResponse';
 
 class ResponseHelper {
 

@@ -1,6 +1,7 @@
+import { Request, Response, NextFunction } from 'express';
+
 import IError from './IError';
 import IErrorHandlerResponse from './IErrorHandlerResponse';
-import { Request, Response, NextFunction } from 'express';
 
 /**
  * construct the standard JSON error object

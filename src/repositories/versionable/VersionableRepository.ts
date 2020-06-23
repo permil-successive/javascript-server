@@ -89,7 +89,10 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     console.info('====== inside delete VersionableRepo =======');
 
     const query: mongoose.FilterQuery<any> = { originalId: id, ...this.DELETE_QUERY };
-    const data = await this.MODEL.findOneAndUpdate(query, getDeletedInfo(currentUser) as any);
+    const data = await this.MODEL.findOneAndUpdate(
+      query, getDeletedInfo(currentUser) as any
+    );
+
     isOperationSuccess(data);
     return data;
   }
@@ -104,7 +107,10 @@ export default class VersionableRepository<D extends IVersionableDocument, M ext
     if (limit > this.DEFAULT_PAGESIZE)
       limit = this.DEFAULT_PAGESIZE;
 
-    const myQuery: mongoose.FilterQuery<any> = { ...query, ...exclude, ...this.DELETE_QUERY };
+    const myQuery: mongoose.FilterQuery<any> = {
+      ...query, ...exclude, ...this.DELETE_QUERY
+    };
+
     return await this.MODEL.find(myQuery, projection)
     .skip(skip)
     .limit(limit)

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import { traineeRoutes } from './controllers/trainee';
 import { userRoutes } from './controllers/user';
 

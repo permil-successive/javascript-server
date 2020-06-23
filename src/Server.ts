@@ -1,5 +1,6 @@
 import *  as express from 'express';
 import * as bodyParser from 'body-parser';
+import { createHttpTerminator } from 'http-terminator';
 
 import { IConfig } from './config';
 import { errorHandler, notFoundRoute } from './libs';
@@ -10,6 +11,8 @@ import { initSwagger } from './initSwagger';
 export default class Server {
 
   app: express.Application;
+  database: Database;
+  httpTerminator;
 
   constructor(private config: IConfig) {
     this.app = express();
@@ -42,18 +45,28 @@ export default class Server {
 
   async run(): Promise<Server> {
     try {
-      const database: Database = new Database(this.config.mongoUri);
-      await database.open();
-      this.app.listen(this.config.port, (err) => {
+      this.database = new Database(this.config.mongoUri);
+      await this.database.open();
+      const server = this.app.listen(this.config.port, (err) => {
         if (err) {
           throw err;
         }
         console.log(`Server is running on ${this.config.port}`);
+        this.httpTerminator = createHttpTerminator({
+          server
+        });
       });
     } catch (err) {
       console.error(err);
     }
 
     return this;
+  }
+
+  async close() {
+    console.log('Server closing');
+    await this.httpTerminator.terminate();
+    await this.database.close();
+    console.log('Server closed');
   }
 }

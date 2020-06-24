@@ -16,7 +16,6 @@ class ResponseHelper {
   }
 
   static sendResponse(resData: any, res: Response, resCode: number = 200) {
-
     res.status(resCode).send(resData);
   }
 }

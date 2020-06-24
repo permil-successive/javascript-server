@@ -46,7 +46,6 @@ const ErrorHandler = (err: IError, req: Request, res: Response, next: NextFuncti
   let errors: IErrorHandlerResponse[];
 
   errors = constructErrors(err);
-
   console.info('errors = ', errors);
 
   let errorCode = err.code || (err[0] && err[0].code) || 500;

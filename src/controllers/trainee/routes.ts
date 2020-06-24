@@ -134,7 +134,11 @@ traineeRoutes.route('/')
  *           $ref: '#/definitions/Error'
  *
  */
-.get(authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), list)
+.get(
+  authorizationHandler(moduleName, PermissionType.read),
+  validationHandler(getConfig),
+  list,
+)
 
 /**
  *
@@ -184,7 +188,11 @@ traineeRoutes.route('/')
  *           $ref: '#/definitions/Error'
  *
  */
-.post(authorizationHandler(moduleName, PermissionType.write), validationHandler(createConfig), create)
+.post(
+  authorizationHandler(moduleName, PermissionType.write),
+  validationHandler(createConfig),
+  create
+)
 
 /**
  *
@@ -234,7 +242,11 @@ traineeRoutes.route('/')
  *           $ref: '#/definitions/Error'
  *
  */
-.put(authorizationHandler(moduleName, PermissionType.write), validationHandler(updateConfig), update);
+.put(
+  authorizationHandler(moduleName, PermissionType.write),
+  validationHandler(updateConfig),
+  update,
+);
 
 /**
  *
@@ -269,6 +281,11 @@ traineeRoutes.route('/')
  *           $ref: '#/definitions/Error'
  *
  */
-traineeRoutes.delete('/:id', authorizationHandler('trainee', 'delete'), validationHandler(validationConfig.delete), deleteFunction);
+traineeRoutes.delete(
+  '/:id',
+  authorizationHandler('trainee', 'delete'),
+  validationHandler(deleteConfig),
+  deleteFunction,
+);
 
 export default traineeRoutes;

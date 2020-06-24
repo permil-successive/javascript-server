@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import Controller from './controller';
 import validationConfig from './validations';
 import { validationHandler, authorizationHandler, PermissionType } from '../../libs';
@@ -154,7 +155,12 @@ const moduleName = 'users';
  *           $ref: '#/definitions/Error'
  *
  */
-userRoutes.get('/me', authorizationHandler(moduleName, PermissionType.read), validationHandler(getConfig), fetchMe);
+userRoutes.get(
+  '/me',
+  authorizationHandler(moduleName, PermissionType.read),
+  validationHandler(getConfig),
+  fetchMe
+);
 
 /**
  * @swagger

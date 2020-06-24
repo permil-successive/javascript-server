@@ -7,9 +7,7 @@ export default class Database {
   constructor(private mongoUri) {}
 
   open(): Promise<any> {
-
     return new Promise<any>(async (resolve, reject) => {
-
       try {
         await mongoose.connect(this.mongoUri, { useNewUrlParser: true });
         console.info(`Database is connect@${this.mongoUri}`);

@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+
 import { ResponseHelper, parseStringQuery } from '../../libs';
 import { UserRepository } from '../../repositories';
 import { configuration } from '../../config';
